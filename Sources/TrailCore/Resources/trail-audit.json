@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "total": 40000,
+  "byLength": {
+    "3": {
+      "count": 10000,
+      "minimumSteps": 4,
+      "maximumSteps": 7,
+      "parAllowance": 1,
+      "sources": 409
+    },
+    "4": {
+      "count": 10000,
+      "minimumSteps": 5,
+      "maximumSteps": 8,
+      "parAllowance": 1,
+      "sources": 344
+    },
+    "5": {
+      "count": 10000,
+      "minimumSteps": 6,
+      "maximumSteps": 9,
+      "parAllowance": 2,
+      "sources": 458
+    },
+    "6": {
+      "count": 10000,
+      "minimumSteps": 7,
+      "maximumSteps": 10,
+      "parAllowance": 2,
+      "sources": 931
+    }
+  },
+  "seed": "574f5244",
+  "acceptedWords": 37819,
+  "familiarWords": 11412,
+  "rule": "Full-dictionary shortest distance equals familiar-only shortest distance; no reverse-pair duplicates."
+}

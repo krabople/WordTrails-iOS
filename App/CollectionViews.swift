@@ -13,7 +13,7 @@ struct GardenView: View {
             if textSize.isAccessibilitySize {
                 VStack(alignment:.leading,spacing:10) { Label("\(store.progress.seeds) seeds",systemImage:"leaf.fill").font(.title3.weight(.semibold)); Text("\(store.progress.planted.count) / \(Plant.all.count) planted").foregroundStyle(.secondary) }
             } else { HStack { Label("\(store.progress.seeds) seeds",systemImage:"leaf.fill").font(.title3.weight(.semibold)); Spacer(); Text("\(store.progress.planted.count) / \(Plant.all.count) planted").foregroundStyle(.secondary) } }
-            Text("Earn 3 seeds the first time you complete each trail in each mode. A route at par with no hints earns 2 more. Plant something for 10 seeds. Replays are always welcome.").font(.subheadline).foregroundStyle(.secondary)
+            Text("Earn 3 seeds the first time you complete each trail in each mode. A route at or under par with no hints earns 2 more. Plant something for 10 seeds. Replays are always welcome.").font(.subheadline).foregroundStyle(.secondary)
             LazyVGrid(columns:textSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum:145))],spacing:14) {
                 ForEach(Plant.all) { plant in
                     let planted = store.progress.planted.contains(plant.id)
@@ -27,7 +27,7 @@ struct GardenView: View {
             Text("Your garden is personal to this device. There are no purchases, ads, or expiring rewards.").font(.caption).foregroundStyle(.secondary)
             Text("Gardens together").font(.system(.title2,design:.serif))
             Text("Every completed co-op trail grows a garden with that partner. New plants appear after 1, 3, 5, 8, 12 and 20 walks together. Human partners see the same milestones from their shared match history.").font(.subheadline).foregroundStyle(.secondary)
-            if store.progress.sharedGardens.isEmpty { Text("Finish a co-op trail with a friend or a bot guide to plant your first shared garden.").foregroundStyle(.secondary) }
+            if store.progress.sharedGardens.isEmpty { Text("Finish a co-op trail with a friend to plant your first shared garden.").foregroundStyle(.secondary) }
             ForEach(store.progress.sharedGardens) { garden in
                 PaperCard { VStack(alignment:.leading,spacing:12) {
                     Text("You + \(garden.name)").font(.headline)
@@ -41,72 +41,97 @@ struct GardenView: View {
         .confirmationDialog("Plant for 10 seeds?",isPresented:Binding(get:{confirm != nil},set:{if !$0 {confirm = nil}}),titleVisibility:.visible) { Button("Plant") { if let confirm { store.plant(confirm) }; confirm = nil }; Button("Cancel",role:.cancel) { confirm = nil } }
     }
 }
-struct JournalView: View {
-    @EnvironmentObject private var store: TrailStore
-    var body: some View {
-        List {
-            Section {
-                HStack { stat("Trails",value:store.progress.completed.count); Spacer(); stat("Day streak",value:store.progress.streak); Spacer(); stat("Badges",value:store.progress.badges.count) }
+struct JournalView:View {
+    @EnvironmentObject private var store:TrailStore
+    private let names=[3:"Meadow",4:"Woodland",5:"Highlands",6:"Summit"]
+    var body:some View {
+        List{
+            Section("At a glance"){
+                LabeledContent("Trails attempted",value:"\(store.progress.attempts.count)")
+                LabeledContent("Trails completed",value:"\(store.progress.completed.count)")
+                LabeledContent("Daily streak",value:"\(store.progress.streak) days")
+                LabeledContent("Badges",value:"\(Badge.all.filter{store.progress.badges.contains($0.id)}.count)")
             }
-            Section("Your badges") {
-                ForEach(Badge.all) { badge in
-                    let unlocked = store.progress.badges.contains(badge.id)
-                    HStack(spacing:16) {
-                        Image(systemName:badge.symbol).font(.title2).foregroundStyle(unlocked ? Palette.ochre : .secondary).frame(width:36)
-                        VStack(alignment:.leading,spacing:4) { Text(badge.title).font(.headline); Text(badge.detail).font(.caption).foregroundStyle(.secondary) }
-                        Spacer(); Image(systemName:unlocked ? "checkmark.seal.fill" : "lock").foregroundStyle(unlocked ? Palette.ink : .secondary)
-                    }.accessibilityElement(children:.combine).accessibilityLabel("\(badge.title). \(badge.detail). \(unlocked ? "Earned" : "Locked")")
+            Section("By difficulty"){
+                ForEach(3...6,id:\.self){length in
+                    DisclosureGroup("\(names[length]!) · \(length) letters"){
+                        DifficultyStatsView(stats:store.progress.statistics(length:length))
+                    }.accessibilityIdentifier("difficultyStats\(length)")
                 }
             }
-            Section("Recent walks") {
-                if store.progress.completed.isEmpty { Text("Your first trail is waiting. Completed trails and routes will appear here.").foregroundStyle(.secondary) }
-                ForEach(Array(store.progress.completed.suffix(40).reversed())) { run in
-                    DisclosureGroup {
+            Section("Overall results against par"){DifficultyStatsView(stats:store.progress.statistics())}
+            Section{Text("Attempt counts include your earlier completed trails. Abandoned attempts are tracked from this update onward. Older results keep the par they were played with.").font(.caption).foregroundStyle(.secondary)}
+            Section("Your badges"){
+                ForEach(Badge.all){badge in
+                    let unlocked=store.progress.badges.contains(badge.id)
+                    HStack(spacing:16){
+                        Image(systemName:badge.symbol).font(.title2).foregroundStyle(unlocked ? Palette.ochre:.secondary).frame(width:36)
+                        VStack(alignment:.leading,spacing:4){Text(badge.title).font(.headline);Text(badge.detail).font(.caption).foregroundStyle(.secondary)}
+                        Spacer();Image(systemName:unlocked ? "checkmark.seal.fill":"lock").foregroundStyle(unlocked ? Palette.ink:.secondary)
+                    }.accessibilityElement(children:.combine).accessibilityLabel("\(badge.title). \(badge.detail). \(unlocked ? "Earned":"Locked")")
+                }
+            }
+            Section("Recent walks"){
+                if store.progress.completed.isEmpty{Text("Your first trail is waiting. Completed routes will appear here.").foregroundStyle(.secondary)}
+                ForEach(Array(store.progress.completed.suffix(40).reversed())){run in
+                    DisclosureGroup{
                         Text(run.chain.joined(separator:" → ")).font(.system(.subheadline,design:.monospaced))
                         Text("\(run.hints) hints · \(run.totalMoves) submitted steps").font(.caption)
-                    } label: {
-                        VStack(alignment:.leading,spacing:5) { Text("\(run.puzzle.start) → \(run.puzzle.goal)").font(.headline); Text("\(run.mode.title) · \(run.moves) steps · Par \(run.puzzle.par)").font(.caption).foregroundStyle(.secondary) }
-                    }
+                    }label:{VStack(alignment:.leading,spacing:5){Text("\(run.puzzle.start) → \(run.puzzle.goal)").font(.headline);Text("\(run.mode.title) · \(run.moves) steps · Par \(run.puzzle.par) · \(run.scoreDescription)").font(.caption).foregroundStyle(.secondary)}}
                 }
             }
-        }.navigationTitle("Journal")
+        }.navigationTitle("Statistics")
     }
-    private func stat(_ label:String,value:Int) -> some View { VStack(alignment:.leading) { Text("\(value)").font(.system(.largeTitle,design:.serif)); Text(label).font(.caption).foregroundStyle(.secondary) } }
 }
-struct SettingsView: View {
+struct DifficultyStatsView:View {
+    let stats:DifficultyStatistics
+    var body:some View {
+        LabeledContent("Attempted",value:"\(stats.attempted)")
+        LabeledContent("Completed",value:"\(stats.completed)")
+        LabeledContent("Completion rate",value:stats.completionRate.formatted(.percent.precision(.fractionLength(0))))
+        LabeledContent("Below par",value:"\(stats.underPar)")
+        LabeledContent("On par",value:"\(stats.onPar)")
+        LabeledContent("Above par",value:"\(stats.overPar)")
+        LabeledContent("Shortest routes",value:"\(stats.shortestRoutes)")
+        if let average=stats.averageMoves{LabeledContent("Average steps",value:average.formatted(.number.precision(.fractionLength(1))))}
+        if let average=stats.averageAgainstPar{LabeledContent("Average vs par",value:average.formatted(.number.sign(strategy:.always()).precision(.fractionLength(1))))}
+        if let best=stats.bestAgainstPar{LabeledContent("Best vs par",value:best.formatted(.number.sign(strategy:.always())))}
+    }
+}
+struct SettingsView:View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var store: TrailStore
-    @State private var licenses = ""
-    var body: some View {
-        List {
-            Section("How to walk a trail") {
-                Text("Change exactly one letter at a time. Keep the word length, use an English word in the game dictionary, and don’t repeat a word. No names, spaces, hyphens, or rearranging letters. Plurals and inflections are allowed when included.")
-                Text("Par is the shortest possible route in the bundled dictionary. A trail’s steps count letter changes, so CAT → COT → DOT → DOG is three steps.")
-                Text("Solo: hints and undo are available. Bot co-op: take turns with a guide; undo returns to your previous turn. Versus and online play: no hints or undo. Versus compares final route length, with ties drawn.")
-                Text("Moves that would leave no route to the destination are rejected, so you cannot become trapped. Online players can forfeit in Game Center’s match picker. There are no ranked prizes or cash rewards.")
+    var body:some View {
+        List{
+            Section("Daily reminder"){NavigationLink("Choose reminder time",systemImage:"bell"){ReminderSettingsView()}}
+            Section("How to walk a trail"){
+                Text("Change exactly one letter at a time. Keep the word length, use a word from the dictionary, and don’t repeat a word. Spaces, hyphens and rearranging letters are not allowed. Plurals and inflected forms are included.")
+                Text("A step is one letter change. CAT → COT → DOT → DOG takes three steps.")
+                Text("Par is your target, not the minimum. Three- and four-letter trails allow one step above the shortest route; five- and six-letter trails allow two. Finishing in fewer steps puts you under par. Par is a difficulty-based target, not a measured player average.")
+                Text("Every new trail has a shortest solution using familiar words. More unusual dictionary words are also accepted, but aren’t required to reach the minimum. Hints prefer familiar shortest routes where possible.")
+                Text("Solo trails have hints and undo. Optional co-op trails alternate turns with a friend through Game Center. Both players share the route and score; online trails do not have hints or undo.")
+                Text("A move that would make the goal unreachable without repeating a word is rejected.")
             }
-            Section("Dictionary") {
-                Text("\(Lexicon.shared.words.count.formatted()) curated English words, 3–6 letters. The same version is used by everyone, including the bots. The dictionary is deliberately bounded: not every English word is accepted. Both players need a compatible app version.")
-                NavigationLink("Browse accepted words") { DictionaryView() }
+            Section("English dictionary"){
+                Text("\(Lexicon.shared.words.count.formatted()) accepted words for the current 3–6-letter games. Based on the comprehensive ESDB English word lists, including British, American, Canadian and Australian spellings, inflections and uncommon vocabulary. Only A–Z word forms fit these trails; proper names, abbreviations, spaces and hyphens are excluded.")
+                NavigationLink("Browse accepted words"){DictionaryView()}
+                NavigationLink("Dictionary source and licence"){ScrollView{Text(Lexicon.licence).font(.caption).padding()}.navigationTitle("Dictionary licence")}
             }
-            Section("Daily trails and rewards") {
-                Text("A new puzzle for each word length appears at 00:00 UTC. Finish a current daily trail to build your streak. Finishing yesterday’s saved trail still earns seeds but does not backdate your streak. Seeds are awarded only once for each trail and mode.")
-                Text("The garden has six collectible plants. Badge progress includes trails with bot guides. Your garden, journal, badges and saved solo trail stay on this device; reinstalling the app removes them unless restored with an iPhone backup.")
-                Text("Shared gardens grow through completed co-op trails with each partner. Human shared milestones can be recovered from completed Game Center matches. Keep completed matches in Game Center if you want to recover that history on another device.")
+            Section("Daily trails and rewards"){
+                Text("There are 10,000 different trails at each word length: over 27 years of daily puzzles per difficulty before a pair repeats. A new puzzle appears at 00:00 UTC.")
+                Text("Finish a current daily trail to build your streak. Old saved trails can still earn seeds but cannot backdate your streak. The first completion of each trail in each mode earns 3 seeds, plus 2 for finishing at or below par without hints. Replays do not award more seeds.")
+                Text("Your earlier seeds, plants, streak and completed trails are preserved. Personal progress stays on this device. Shared gardens can be recovered from completed co-op matches retained in Game Center.")
             }
-            Section("Friends and privacy") {
-                Text("Solo and bots need no account or internet connection. Human play uses Apple Game Center for identity, friends, matchmaking, match storage and turn alerts. You explicitly choose when to sign in or request friend access. Word Trails has no advertising, analytics SDK, chat, contact upload or independent account database.")
-                Text("Bot guides are clearly labelled. They have no Apple accounts, never impersonate users, and don’t appear in human matchmaking. Game Center friends and blocking are managed in Apple’s Game Center settings.")
-                Text("Game Center activity is subject to Apple’s privacy policy.")
+            Section("Privacy"){
+                Text("Solo play and daily reminders work without an account or internet connection. Your iPhone schedules reminders only after you opt in. Co-op uses Apple Game Center for identity, friends, match storage and turn alerts. No advertising, analytics SDK, chat, contact upload or independent account database.")
                 Link("Apple Game Center and privacy",destination:URL(string:"https://www.apple.com/legal/privacy/data/en/game-center/")!)
             }
-            Section("Accessibility") { Text("Word Trails follows your system text size and appearance. Letter changes use both position and shading. VoiceOver reads words letter by letter. All scenes are static, with no motion needed to play. Larger text may require scrolling.") }
-            Section { Text("Word Trails · Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"))").font(.caption); Text("Artwork is drawn from original vector geometry and Apple SF Symbols. No generated raster artwork or stock player portraits.").font(.caption).foregroundStyle(.secondary) }
-        }.navigationTitle("Field notes").toolbar { Button("Done") { dismiss() } }
+            Section("Accessibility"){Text("System text sizes, dark mode and VoiceOver are supported. Changed letters are underlined as well as tinted. Scenes are static; larger text can be read by scrolling.")}
+            Section{Text("Word Trails · Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"))").font(.caption)}
+        }.navigationTitle("Field notes").toolbar{Button("Done"){dismiss()}}
     }
 }
-struct DictionaryView: View {
-    @State private var query = ""
-    private var results: [String] { Lexicon.shared.words.filter { query.isEmpty || $0.contains(query.uppercased()) }.sorted() }
-    var body: some View { List { Section("\(results.count) words") { ForEach(results,id:\.self) { Text($0).font(.system(.body,design:.monospaced)) } } }.searchable(text:$query,prompt:"Find a word").navigationTitle("Trail dictionary") }
+struct DictionaryView:View {
+    @State private var query=""
+    private var results:[String]{query.isEmpty ? Lexicon.shared.sortedWords:Lexicon.shared.sortedWords.filter{$0.contains(query.uppercased())}}
+    var body:some View{List{Section("\(results.count) words"){ForEach(results,id:\.self){Text($0).font(.system(.body,design:.monospaced))}}}.searchable(text:$query,prompt:"Find a word").navigationTitle("Trail dictionary")}
 }

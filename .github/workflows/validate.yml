@@ -16,8 +16,8 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
-      - name: Test rules, routes, bots and rewards
-        run: swift test --parallel
+      - name: Test dictionary, all routes, statistics and rewards
+        run: swift test -c release --parallel
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Draw app icon and generate project
