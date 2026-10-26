@@ -103,6 +103,15 @@ enum SocialError: LocalizedError {
                 try await fresh.saveCurrentTurn(withMatch:JSONEncoder().encode(content))
             }
             try content.validate()
+            let opponents = fresh.participants.filter {$0.player?.gamePlayerID != localID}
+            if fresh.status == .open, fresh.currentParticipant?.player?.gamePlayerID == localID,
+               !opponents.isEmpty, opponents.allSatisfy({$0.status == .done || $0.status == .declined}) {
+                for participant in fresh.participants {
+                    if participant.player?.gamePlayerID == localID { participant.matchOutcome = .won }
+                    else if participant.matchOutcome == .none { participant.matchOutcome = .quit }
+                }
+                try await fresh.endMatchInTurn(withMatch:JSONEncoder().encode(content))
+            }
             selected = fresh; state = content; error = nil
         } catch { self.error = error.localizedDescription }
     }
@@ -174,6 +183,37 @@ enum SocialError: LocalizedError {
         }
         store.save()
     }
+    func forfeit(_ match: GKTurnBasedMatch) async {
+        guard authenticated, !busy else { return }
+        let identity = localID
+        busy = true; defer { busy = false }
+        do {
+            let fresh = try await GKTurnBasedMatch.load(withID:match.matchID)
+            guard authenticated, identity == localID, fresh.status == .open else { throw SocialError.unavailable }
+            let data = fresh.matchData ?? Data()
+            if fresh.currentParticipant?.player?.gamePlayerID == localID {
+                let others = fresh.participants.filter {$0.player?.gamePlayerID != localID && $0.status != .done && $0.status != .declined}
+                if others.isEmpty {
+                    for participant in fresh.participants where participant.matchOutcome == .none { participant.matchOutcome = .quit }
+                    try await fresh.endMatchInTurn(withMatch:data)
+                } else {
+                    try await withCheckedThrowingContinuation { (continuation:CheckedContinuation<Void,Error>) in
+                        fresh.participantQuitInTurn(with:.quit,nextParticipants:others,turnTimeout:GKTurnTimeoutDefault,match:data) { failure in
+                            if let failure { continuation.resume(throwing:failure) } else { continuation.resume() }
+                        }
+                    }
+                }
+            } else {
+                try await withCheckedThrowingContinuation { (continuation:CheckedContinuation<Void,Error>) in
+                    fresh.participantQuitOutOfTurn(with:.quit) { failure in
+                        if let failure { continuation.resume(throwing:failure) } else { continuation.resume() }
+                    }
+                }
+            }
+            if selected?.matchID == match.matchID { selected = nil; state = nil }
+            error = nil
+        } catch { self.error = error.localizedDescription }
+    }
     nonisolated func player(_ player: GKPlayer, receivedTurnEventFor match: GKTurnBasedMatch, didBecomeActive: Bool) {
         Task { @MainActor in await refresh(); if selected?.matchID == match.matchID || didBecomeActive { await open(match) } }
     }
@@ -198,6 +238,6 @@ struct Matchmaker: UIViewControllerRepresentable {
         nonisolated func turnBasedMatchmakerViewControllerWasCancelled(_ viewController:GKTurnBasedMatchmakerViewController) { Task { @MainActor in service.showMatchmaker = false } }
         nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,didFailWithError error:Error) { Task { @MainActor in service.showMatchmaker = false; service.error = error.localizedDescription } }
         nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,didFind match:GKTurnBasedMatch) { Task { @MainActor in service.showMatchmaker = false; await service.open(match) } }
-        nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,playerQuitFor match:GKTurnBasedMatch) { Task { @MainActor in await service.refresh() } }
+        nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,playerQuitFor match:GKTurnBasedMatch) { Task { @MainActor in await service.forfeit(match); await service.refresh() } }
     }
 }
