@@ -4,14 +4,17 @@ import TrailCore
 struct GardenView: View {
     @EnvironmentObject private var store: TrailStore
     @EnvironmentObject private var social: GameCenterService
+    @Environment(\.dynamicTypeSize) private var textSize
     @State private var confirm: String?
     var body: some View {
         ScrollView { VStack(alignment:.leading,spacing:22) {
             Text("Small steps.\nSomething growing.").font(.system(.largeTitle,design:.serif))
             Landscape(planted:store.progress.planted.count).frame(height:210).background(Palette.paper,in:RoundedRectangle(cornerRadius:24)).clipShape(RoundedRectangle(cornerRadius:24))
-            HStack { Label("\(store.progress.seeds) seeds",systemImage:"leaf.fill").font(.title3.weight(.semibold)); Spacer(); Text("\(store.progress.planted.count) / \(Plant.all.count) planted").foregroundStyle(.secondary) }
+            if textSize.isAccessibilitySize {
+                VStack(alignment:.leading,spacing:10) { Label("\(store.progress.seeds) seeds",systemImage:"leaf.fill").font(.title3.weight(.semibold)); Text("\(store.progress.planted.count) / \(Plant.all.count) planted").foregroundStyle(.secondary) }
+            } else { HStack { Label("\(store.progress.seeds) seeds",systemImage:"leaf.fill").font(.title3.weight(.semibold)); Spacer(); Text("\(store.progress.planted.count) / \(Plant.all.count) planted").foregroundStyle(.secondary) } }
             Text("Earn 3 seeds the first time you complete each trail in each mode. A route at par with no hints earns 2 more. Plant something for 10 seeds. Replays are always welcome.").font(.subheadline).foregroundStyle(.secondary)
-            LazyVGrid(columns:[GridItem(.adaptive(minimum:145))],spacing:14) {
+            LazyVGrid(columns:textSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum:145))],spacing:14) {
                 ForEach(Plant.all) { plant in
                     let planted = store.progress.planted.contains(plant.id)
                     VStack(spacing:14) {
