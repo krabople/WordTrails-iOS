@@ -23,11 +23,11 @@ public final class Lexicon: @unchecked Sendable {
     public func contains(_ word:String)->Bool {words.contains(word.uppercased())}
     public static func adjacent(_ a:String,_ b:String)->Bool {a.count==b.count && zip(a,b).filter {$0 != $1}.count==1}
     public func neighbors(_ word:String)->[String] {adjacency[word] ?? []}
-    public func path(from start:String,to goal:String,avoiding:Set<String> = [])->[String]? {
+    public func path(from start:String,to goal:String,avoiding:Set<String> = [],allowed:Set<String>?=nil)->[String]? {
         guard contains(start),contains(goal),start.count==goal.count else{return nil}
         if start==goal{return[start]}
         var queue=[start],head=0,parent:[String:String]=[:],seen=avoiding;seen.insert(start)
-        while head<queue.count {let current=queue[head];head+=1;for next in neighbors(current) where !seen.contains(next) {seen.insert(next);parent[next]=current;if next==goal {var route=[goal],node=goal;while let prev=parent[node] {route.append(prev);node=prev};return route.reversed()};queue.append(next)}}
+        while head<queue.count {let current=queue[head];head+=1;for next in neighbors(current) where !seen.contains(next) && (allowed == nil || allowed!.contains(next)) {seen.insert(next);parent[next]=current;if next==goal {var route=[goal],node=goal;while let prev=parent[node] {route.append(prev);node=prev};return route.reversed()};queue.append(next)}}
         return nil
     }
     public func distances(from start:String,maximum:Int=Int.max)->[String:Int] {

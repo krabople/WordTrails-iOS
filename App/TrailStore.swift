@@ -6,6 +6,7 @@ import TrailCore
     @Published var run:Run?
     @Published var message=""
     @Published var awarded=0
+    @Published var newBadges:[Badge]=[]
     @Published var busy=false
     @Published var showWelcome = !UserDefaults.standard.bool(forKey:"welcomed")
     @Published var persistenceError:String?
@@ -23,6 +24,7 @@ import TrailCore
                 progress=saved.progress;run=saved.run
             }
             progress.migrateLegacyHistory()
+            let earlierBadges=progress.badges;progress.refreshBadges();announceBadges(since:earlierBadges)
             if let old=run,old.puzzle.minimumSteps==nil || old.guide != nil || old.mode == .legacyVersus {
                 run=old.migratedToSolo(recalculate:!old.isComplete)
                 if !old.isComplete{message="Your saved trail now uses the expanded dictionary and updated par."}
@@ -51,13 +53,21 @@ import TrailCore
         do{try next.submit(word);run=next;message="";finishIfNeeded();save()}
         catch{message=error.localizedDescription;UIAccessibility.post(notification:.announcement,argument:message)}
     }
-    func finishIfNeeded(){guard let run,run.isComplete else{return};awarded=progress.record(run)}
+    func finishIfNeeded(){guard let run,run.isComplete else{return};awarded=record(run)}
     func undo(){guard var next=run else{return};next.undo();run=next;message="";save()}
     func hint(){
         guard var next=run,!next.isComplete else{return}
-        if let hint=next.nextHint(){next.hints+=1;run=next;message="Try \(hint). Hints turn off the unassisted bonus.";save()}
+        if let hint=next.hintSuggestion(){next.hints+=1;run=next;message="Try \(hint.word). " + (hint.requiresUnfamiliarWords ? "The shortest remaining route uses uncommon words. Undo a step to look for a familiar route. ":"") + "Hints turn off the unassisted bonus.";save()}
         else{message="No forward path from here. Undo a step to rejoin the trail."}
     }
-    func plant(_ id:String){if progress.plant(id){save()}}
+    @discardableResult func record(_ run:Run)->Int {
+        let previous=progress.badges;let earned=progress.record(run);announceBadges(since:previous);return earned
+    }
+    func acknowledgeBadges(){newBadges=[];save()}
+    private func announceBadges(since previous:Set<String>){
+        let fresh=Badge.all.filter{progress.badges.contains($0.id) && !previous.contains($0.id)}
+        for badge in fresh where !newBadges.contains(where:{$0.id==badge.id}){newBadges.append(badge)}
+    }
+    func plant(_ id:String){let previous=progress.badges;if progress.plant(id){announceBadges(since:previous);save()}}
     func welcome(){showWelcome=false;UserDefaults.standard.set(true,forKey:"welcomed")}
 }

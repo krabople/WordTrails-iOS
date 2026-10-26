@@ -53,6 +53,8 @@ jobs:
         run: |
           mkdir -p .build/screenshots
           xcrun xcresulttool export attachments --path .build/WordTrails.xcresult --output-path .build/screenshots || true
+          APP_DATA=$(xcrun simctl get_app_container "$SIMULATOR_ID" com.krabople.wordtrails data) || true
+          if [ -f "$APP_DATA/Documents/share-card-test.png" ]; then cp "$APP_DATA/Documents/share-card-test.png" .build/screenshots/Result-Card.png; fi
       - uses: actions/upload-artifact@v7
         if: always()
         with:

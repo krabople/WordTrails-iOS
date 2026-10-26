@@ -54,12 +54,16 @@ public struct Run:Codable,Hashable,Identifiable,Sendable {
         if isComplete{finishedAt=Date()}
     }
     public mutating func undo(){guard chain.count>1,!isComplete else{return};chain.removeLast()}
-    public func nextHint(lexicon:Lexicon = .shared)->String? {
+    public func hintSuggestion(lexicon:Lexicon = .shared,familiar:Lexicon = .familiar)->HintSuggestion? {
         let avoid=Set(chain.dropLast())
-        guard let shortest=lexicon.path(from:chain.last!,to:puzzle.goal,avoiding:avoid) else{return nil}
-        if lexicon === Lexicon.shared,let familiar=Lexicon.familiar.path(from:chain.last!,to:puzzle.goal,avoiding:avoid),familiar.count==shortest.count{return familiar.dropFirst().first}
-        return shortest.dropFirst().first
+        guard let shortest=lexicon.path(from:chain.last!,to:puzzle.goal,avoiding:avoid),shortest.count>1 else{return nil}
+        // The current word may be unusual; only FUTURE steps must be familiar.
+        if let common=lexicon.path(from:chain.last!,to:puzzle.goal,avoiding:avoid,allowed:familiar.words),common.count==shortest.count {
+            return HintSuggestion(word:common[1],requiresUnfamiliarWords:false)
+        }
+        return HintSuggestion(word:shortest[1],requiresUnfamiliarWords:true)
     }
+    public func nextHint(lexicon:Lexicon = .shared)->String? {hintSuggestion(lexicon:lexicon)?.word}
     public func isValid(lexicon:Lexicon = .shared)->Bool {
         chain.first==puzzle.start && !chain.isEmpty && chain.count<=500 && Set(chain).count==chain.count && chain.allSatisfy{lexicon.contains($0)} && zip(chain,chain.dropFirst()).allSatisfy{Lexicon.adjacent($0,$1)} && (finishedAt==nil || isComplete)
     }
@@ -70,6 +74,10 @@ public struct Run:Codable,Hashable,Identifiable,Sendable {
         copy.chain=chain;copy.hints=hints;copy.totalMoves=totalMoves;copy.startedAt=startedAt;copy.finishedAt=finishedAt
         return copy
     }
+}
+public struct HintSuggestion:Equatable,Sendable {
+    public let word:String
+    public let requiresUnfamiliarWords:Bool
 }
 public struct DifficultyStatistics:Sendable {
     public let attempted:Int,completed:Int,underPar:Int,onPar:Int,overPar:Int,shortestRoutes:Int
@@ -98,7 +106,23 @@ public struct Badge:Identifiable,Sendable {
         Badge(id:"week",title:"Seven sunrises",detail:"Reach a 7-day daily streak",symbol:"sunrise.fill"),
         Badge(id:"month",title:"Habit in bloom",detail:"Reach a 30-day daily streak",symbol:"sun.max.fill"),
         Badge(id:"coop",title:"Better together",detail:"Finish a co-op trail",symbol:"person.2.fill"),
-        Badge(id:"expert",title:"Mountain words",detail:"Complete a six-letter trail",symbol:"mountain.2.fill")
+        Badge(id:"expert",title:"Mountain words",detail:"Complete a six-letter trail",symbol:"mountain.2.fill"),
+        Badge(id:"hundred",title:"Well travelled",detail:"Complete 100 rewarded trails",symbol:"backpack.fill"),
+        Badge(id:"quarter",title:"Across the map",detail:"Complete 250 rewarded trails",symbol:"globe.europe.africa.fill"),
+        Badge(id:"fivehundred",title:"Far horizons",detail:"Complete 500 rewarded trails",symbol:"binoculars.fill"),
+        Badge(id:"thousand",title:"A thousand paths",detail:"Complete 1,000 rewarded trails",symbol:"sparkles"),
+        Badge(id:"daily30",title:"A month of walks",detail:"Play daily trails on 30 different days",symbol:"calendar"),
+        Badge(id:"daily100",title:"A hundred mornings",detail:"Play daily trails on 100 different days",symbol:"sun.horizon.fill"),
+        Badge(id:"daily365",title:"A year of wordplay",detail:"Play daily trails on 365 different days",symbol:"calendar.badge.checkmark"),
+        Badge(id:"season",title:"Seasoned walker",detail:"Reach a 90-day daily streak",symbol:"leaf.circle.fill"),
+        Badge(id:"year",title:"Every sunrise",detail:"Reach a 365-day daily streak",symbol:"sun.max.circle.fill"),
+        Badge(id:"under25",title:"Ahead of the trail",detail:"Finish 25 different trails below par",symbol:"arrow.down.right"),
+        Badge(id:"under100",title:"Below and beyond",detail:"Finish 100 different trails below par",symbol:"medal.fill"),
+        Badge(id:"perfect25",title:"Direct routes",detail:"Find 25 different shortest routes without hints or undo",symbol:"point.topleft.down.to.point.bottomright.curvepath"),
+        Badge(id:"perfect100",title:"A sure-footed hundred",detail:"Find 100 different shortest routes without hints or undo",symbol:"rosette"),
+        Badge(id:"allLengths",title:"Every landscape",detail:"Complete 25 different trails at each word length",symbol:"mountain.2.circle.fill"),
+        Badge(id:"garden",title:"In full bloom",detail:"Plant all six plants in your garden",symbol:"camera.macro"),
+        Badge(id:"coop25",title:"Walking companions",detail:"Complete 25 different co-op trails",symbol:"person.2.circle.fill")
     ]
 }
 public struct Progress:Codable,Sendable {
@@ -154,17 +178,42 @@ public struct Progress:Codable,Sendable {
             let day=TrailCatalog.dayKey(finish)
             if run.puzzle.id=="daily-\(day)-\(run.puzzle.length)"{dailyDays.insert(day)}
         }
-        badges.insert("first")
-        if run.moves==run.puzzle.minimum && run.hints==0 && run.totalMoves==run.moves{badges.insert("perfect")}
-        if claimed.count>=10{badges.insert("ten")};if claimed.count>=50{badges.insert("fifty")}
-        if streak>=7{badges.insert("week")};if streak>=30{badges.insert("month")}
-        if run.mode == .coop{badges.insert("coop")}
-        if run.puzzle.length==6{badges.insert("expert")}
+        refreshBadges()
         return earned
+    }
+    public var longestDailyStreak:Int {
+        var calendar=Calendar(identifier:.gregorian);calendar.timeZone=TimeZone(secondsFromGMT:0)!
+        let days=dailyDays.compactMap { key->Int? in
+            let parts=key.split(separator:"-").compactMap{Int($0)}
+            guard parts.count==3,let date=calendar.date(from:DateComponents(year:parts[0],month:parts[1],day:parts[2])) else{return nil}
+            return Int(date.timeIntervalSince1970/86400)
+        }.sorted()
+        var best=0,current=0,previous:Int?
+        for day in days{current = previous==day-1 ? current+1:1;best=max(best,current);previous=day}
+        return best
+    }
+    public mutating func refreshBadges(){
+        func key(_ run:Run)->String {"\(run.puzzle.id)-\(run.mode.rawValue)"}
+        let distinct=Dictionary(grouping:completed,by:key).values.compactMap{ $0.first }
+        let perfect=Set(completed.filter{$0.moves==$0.puzzle.minimum && $0.hints==0 && $0.totalMoves==$0.moves}.map(key)).count
+        let below=Set(completed.filter{$0.scoreAgainstPar<0}.map(key)).count
+        let longest=longestDailyStreak
+        if !completed.isEmpty{badges.insert("first")}
+        if perfect>0{badges.insert("perfect")}
+        for (amount,id) in [(10,"ten"),(50,"fifty"),(100,"hundred"),(250,"quarter"),(500,"fivehundred"),(1000,"thousand")] where claimed.count>=amount {badges.insert(id)}
+        for (amount,id) in [(7,"week"),(30,"month"),(90,"season"),(365,"year")] where longest>=amount {badges.insert(id)}
+        for (amount,id) in [(30,"daily30"),(100,"daily100"),(365,"daily365")] where dailyDays.count>=amount {badges.insert(id)}
+        for (amount,id) in [(25,"under25"),(100,"under100")] where below>=amount {badges.insert(id)}
+        for (amount,id) in [(25,"perfect25"),(100,"perfect100")] where perfect>=amount {badges.insert(id)}
+        if distinct.contains(where:{$0.mode == .coop}){badges.insert("coop")}
+        if distinct.filter({$0.mode == .coop}).count>=25{badges.insert("coop25")}
+        if distinct.contains(where:{$0.puzzle.length==6}){badges.insert("expert")}
+        if (3...6).allSatisfy({length in distinct.filter{$0.puzzle.length==length}.count>=25}){badges.insert("allLengths")}
+        if Plant.all.allSatisfy({planted.contains($0.id)}){badges.insert("garden")}
     }
     public mutating func plant(_ id:String)->Bool {
         guard Plant.all.contains(where:{$0.id==id}),!planted.contains(id),seeds>=10 else{return false}
-        seeds-=10;planted.insert(id);return true
+        seeds-=10;planted.insert(id);refreshBadges();return true
     }
     public mutating func rememberGarden(id:String,name:String,trailID:String){
         if let i=sharedGardens.firstIndex(where:{$0.id==id}){sharedGardens[i].completedTrails.insert(trailID);sharedGardens[i].name=name}

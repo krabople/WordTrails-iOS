@@ -17,10 +17,16 @@ final class WordTrailsUITests: XCTestCase {
         let input = app.textFields["wordInput"]
         XCTAssertTrue(input.waitForExistence(timeout:10))
         for word in ["COT","DOT","DOG"] { input.tap(); input.typeText(word+"\n") }
+        XCTAssertTrue(app.alerts["New badges earned"].waitForExistence(timeout:5))
+        screenshot("11-New-Badges",app)
+        app.alerts.buttons["Lovely"].tap()
         XCTAssertTrue(app.staticTexts["Trail complete"].waitForExistence(timeout:5))
         XCTAssertTrue(app.staticTexts["+5 seeds for your garden"].exists)
         XCTAssertEqual(app.staticTexts["parResult"].label,"1 under par")
         app.swipeUp(); screenshot("06-Complete",app)
+        app.buttons["shareResult"].tap()
+        XCTAssertTrue(app.buttons["shareCard"].waitForExistence(timeout:10))
+        screenshot("12-Share-Card",app)
     }
     func testRemindersAreOptInAndStatisticsAreAvailable() throws {
         let app=XCUIApplication();app.launchArguments=["--ui-test","--example-trail"];app.launch()

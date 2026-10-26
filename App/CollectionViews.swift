@@ -26,7 +26,7 @@ struct GardenView: View {
             }
             Text("Your garden is personal to this device. There are no purchases, ads, or expiring rewards.").font(.caption).foregroundStyle(.secondary)
             Text("Gardens together").font(.system(.title2,design:.serif))
-            Text("Every completed co-op trail grows a garden with that partner. New plants appear after 1, 3, 5, 8, 12 and 20 walks together. Human partners see the same milestones from their shared match history.").font(.subheadline).foregroundStyle(.secondary)
+            Text("Every completed co-op trail grows a garden with that partner. New plants appear after 1, 3, 5, 8, 12 and 20 walks together. Partners see the same milestones from their shared match history.").font(.subheadline).foregroundStyle(.secondary)
             if store.progress.sharedGardens.isEmpty { Text("Finish a co-op trail with a friend to plant your first shared garden.").foregroundStyle(.secondary) }
             ForEach(store.progress.sharedGardens) { garden in
                 PaperCard { VStack(alignment:.leading,spacing:12) {
@@ -120,7 +120,7 @@ struct SettingsView:View {
                 NavigationLink("Dictionary source and licence"){ScrollView{Text(Lexicon.licence).font(.caption).padding()}.navigationTitle("Dictionary licence")}
             }
             Section("Daily trails and rewards"){
-                Text("There are 10,000 different trails at each word length: over 27 years of daily puzzles per difficulty before a pair repeats. A new puzzle appears at 00:00 UTC.")
+                Text("Discover a fresh trail every day. Everyone gets the same daily puzzle at each difficulty, with a new trail appearing at midnight UTC.")
                 Text("Finish a current daily trail to build your streak. Old saved trails can still earn seeds but cannot backdate your streak. The first completion of each trail in each mode earns 3 seeds, plus 2 for finishing at or below par without hints. Replays do not award more seeds.")
                 Text("Your earlier seeds, plants, streak and completed trails are preserved. Personal progress stays on this device. Shared gardens can be recovered from completed co-op matches retained in Game Center.")
             }

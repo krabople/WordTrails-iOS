@@ -99,6 +99,73 @@ final class TrailCoreTests: XCTestCase {
         let next=try XCTUnwrap(time.nextDate(after:first,calendar:calendar))
         XCTAssertEqual(next.timeIntervalSince(first),86400)
     }
+    func testHintCanLeaveUnfamiliarWordViaFamiliarShortestRoute() throws {
+        let all=Lexicon(words:["MAS","AAS","AAB","JAB","GAS","GAB"])
+        let common=Lexicon(words:["GAS","GAB","JAB"])
+        let run=Run(puzzle:Puzzle(id:"hint",start:"MAS",goal:"JAB",par:4,minimumSteps:3))
+        XCTAssertEqual(all.path(from:"MAS",to:"JAB")?.dropFirst().first,"AAS")
+        XCTAssertNil(common.path(from:"MAS",to:"JAB"))
+        let hint=try XCTUnwrap(run.hintSuggestion(lexicon:all,familiar:common))
+        XCTAssertEqual(hint.word,"GAS");XCTAssertFalse(hint.requiresUnfamiliarWords)
+    }
+    func testUnusualHintOnlyWhenNoFamiliarShortestContinuationRemains() throws {
+        let all=Lexicon(words:["MEN","MAN","MAS","AAS","AAB","JAB","CAN","CAB"])
+        let common=Lexicon(words:["MEN","MAN","CAN","CAB","JAB"])
+        var run=Run(puzzle:Puzzle(id:"hint",start:"MEN",goal:"JAB",par:5,minimumSteps:4))
+        XCTAssertFalse(try XCTUnwrap(run.hintSuggestion(lexicon:all,familiar:common)).requiresUnfamiliarWords)
+        try run.submit("MAN",lexicon:all);try run.submit("MAS",lexicon:all)
+        let hint=try XCTUnwrap(run.hintSuggestion(lexicon:all,familiar:common))
+        XCTAssertEqual(hint.word,"AAS");XCTAssertTrue(hint.requiresUnfamiliarWords)
+    }
+    func testTodaysDailyHintsStayFamiliarAndAasIsNeverIntended() throws {
+        XCTAssertFalse(Lexicon.familiar.contains("AAS"));XCTAssertTrue(Lexicon.shared.contains("AAS"))
+        XCTAssertFalse(TrailCatalog.all.contains{($0.familiarPath ?? []).contains("AAS")})
+        var run=Run(puzzle:TrailCatalog.daily(length:3,date:Date(timeIntervalSince1970:1792972800)))
+        while !run.isComplete {
+            let hint=try XCTUnwrap(run.hintSuggestion())
+            XCTAssertFalse(hint.requiresUnfamiliarWords);XCTAssertTrue(Lexicon.familiar.contains(hint.word))
+            try run.submit(hint.word)
+        }
+        XCTAssertEqual(run.moves,run.puzzle.minimum)
+    }
+    func testSameDailyPuzzleAcrossTimeZonesAndUtcRollover() throws {
+        let iso=ISO8601DateFormatter()
+        let london=try XCTUnwrap(iso.date(from:"2026-10-26T13:00:00+00:00"))
+        let california=try XCTUnwrap(iso.date(from:"2026-10-26T06:00:00-07:00"))
+        for length in 3...6 {
+            XCTAssertEqual(TrailCatalog.daily(length:length,date:london),TrailCatalog.daily(length:length,date:california))
+            let last=try XCTUnwrap(iso.date(from:"2026-10-26T23:59:59Z"))
+            let first=last.addingTimeInterval(1)
+            XCTAssertNotEqual(TrailCatalog.daily(length:length,date:last).id,TrailCatalog.daily(length:length,date:first).id)
+        }
+    }
+    func testLongTermBadgesAndHistoricStreaksAreRecognised() {
+        var progress=TrailCore.Progress()
+        progress.claimed=Set((0..<1000).map{"trail-\($0)-solo"})
+        let first=Date(timeIntervalSince1970:1704067200)
+        progress.dailyDays=Set((0..<365).map{TrailCatalog.dayKey(first.addingTimeInterval(Double($0)*86400))})
+        progress.planted=Set(Plant.all.map(\.id));progress.refreshBadges()
+        XCTAssertEqual(progress.longestDailyStreak,365)
+        for id in ["hundred","quarter","fivehundred","thousand","daily30","daily100","daily365","season","year","garden"] {XCTAssertTrue(progress.badges.contains(id),id)}
+        XCTAssertEqual(Badge.all.count,24);XCTAssertEqual(Set(Badge.all.map(\.id)).count,24)
+    }
+    func testReplayingOnePuzzleCannotFarmDistinctRouteBadges() {
+        var progress=TrailCore.Progress()
+        for index in 0..<100 {
+            var run=Run(puzzle:Puzzle(id:"same",start:"CAT",goal:"DOG",par:4,minimumSteps:3))
+            run.chain=["CAT","COT","DOT","DOG"];run.totalMoves=3;run.finishedAt=Date()
+            progress.completed.append(run)
+            if index==99{progress.refreshBadges()}
+        }
+        XCTAssertFalse(progress.badges.contains("under25"));XCTAssertFalse(progress.badges.contains("perfect25"))
+        progress.completed=[]
+        for index in 0..<100 {
+            var run=Run(puzzle:Puzzle(id:"different-\(index)",start:"CAT",goal:"DOG",par:4,minimumSteps:3))
+            run.chain=["CAT","COT","DOT","DOG"];run.totalMoves=3;run.finishedAt=Date();progress.completed.append(run)
+        }
+        progress.refreshBadges()
+        XCTAssertTrue(progress.badges.contains("under100"));XCTAssertTrue(progress.badges.contains("perfect100"))
+    }
     func testDailyDeterminismUTCAndLengths() {
         let date = Date(timeIntervalSince1970:1793030400)
         for length in 3...6 { let a = TrailCatalog.daily(length:length,date:date); XCTAssertEqual(a,TrailCatalog.daily(length:length,date:date.addingTimeInterval(100))); XCTAssertEqual(a.length,length); XCTAssertTrue(a.id.contains(TrailCatalog.dayKey(date))) }

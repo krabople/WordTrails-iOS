@@ -133,7 +133,7 @@ enum SocialError: LocalizedError {
         } catch { self.error = error.localizedDescription }
     }
     func record(_ run: Run, in store: TrailStore, state: SharedTrail) {
-        store.progress.record(run)
+        store.record(run)
         if state.mode == .coop, let match = selected, let friend = match.participants.compactMap(\.player).first(where:{$0.gamePlayerID != localID}) {
             store.progress.rememberGarden(id:friend.gamePlayerID,name:friend.displayName,trailID:run.id.uuidString)
         }

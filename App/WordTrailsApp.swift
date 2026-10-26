@@ -32,7 +32,11 @@ struct RootView:View {
         .onChange(of:social.selected?.matchID){_,value in if value != nil{tab=1}}
         .onChange(of:scenePhase){_,phase in if phase == .active{Task{await reminders.refresh()}}}
         .task{if !ProcessInfo.processInfo.arguments.contains("--ui-test"){await reminders.refresh()}}
-        .alert("Saved progress needs attention",isPresented:$store.showRecoveryWarning){Button("Keep playing this session",role:.cancel){}}message:{Text(store.persistenceError ?? "")}
+        .alert(store.showRecoveryWarning ? "Saved progress needs attention":store.newBadges.count==1 ? "New badge earned":"New badges earned",isPresented:Binding(get:{store.showRecoveryWarning || (!store.showWelcome && !store.newBadges.isEmpty)},set:{if !$0{if store.showRecoveryWarning{store.showRecoveryWarning=false}else{store.acknowledgeBadges()}}})){
+            if store.showRecoveryWarning{Button("Keep playing this session",role:.cancel){store.showRecoveryWarning=false}}
+            else{Button("Lovely"){store.acknowledgeBadges()}}
+        }message:{Text(store.showRecoveryWarning ? (store.persistenceError ?? ""):store.newBadges.map{"\($0.title)\n\($0.detail)"}.joined(separator:"\n\n"))}
+
     }
 }
 struct WelcomeView:View {
@@ -107,6 +111,7 @@ struct TrailHome:View {
 struct LocalPlayView:View {
     @EnvironmentObject var store:TrailStore
     @State private var input=""
+    @State private var sharing=false
     @FocusState private var focused:Bool
     var body:some View {
         ScrollViewReader{proxy in
@@ -128,6 +133,7 @@ struct LocalPlayView:View {
             }.padding(20)}.background(Palette.canvas)
             .onChange(of:store.run?.chain.count){_,_ in withAnimation{proxy.scrollTo("input",anchor:.bottom)}}
         }.navigationTitle("On the trail").navigationBarTitleDisplayMode(.inline).onDisappear{store.save()}
+        .sheet(isPresented:$sharing){if let run=store.run{ResultShareView(run:run)}}
     }
     private func submit(){store.submit(input);if store.message.isEmpty{input=""};if store.run?.isComplete==true{focused=false}}
     private func completion(_ run:Run)->some View{
@@ -136,7 +142,7 @@ struct LocalPlayView:View {
             Text(run.scoreDescription).font(.title2.weight(.semibold)).foregroundStyle(Palette.ink).accessibilityIdentifier("parResult")
             Text("\(run.moves) steps · Par \(run.puzzle.par) · Minimum \(run.puzzle.minimum)").font(.headline)
             Text(store.awarded>0 ? "+\(store.awarded) seeds for your garden":"A lovely walk. Seeds are awarded once per trail and mode.").foregroundStyle(.secondary)
-            ShareLink(item:"Word Trails\(run.isDaily ? " daily":"") · \(run.puzzle.length) letters\n\(run.moves) steps · Par \(run.puzzle.par)\n\(run.scoreDescription)\n\(run.hints==0 ? "No hints":"\(run.hints) hints")\nCan you find your way?"){Label("Share your result",systemImage:"square.and.arrow.up")}
+            Button("Share your result",systemImage:"square.and.arrow.up"){sharing=true}.accessibilityIdentifier("shareResult")
         }}
     }
 }
