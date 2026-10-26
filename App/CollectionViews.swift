@@ -105,7 +105,7 @@ struct SettingsView:View {
     @Environment(\.dismiss) private var dismiss
     var body:some View {
         List{
-            Section("Daily reminder"){NavigationLink("Choose reminder time",systemImage:"bell"){ReminderSettingsView()}}
+            Section("Daily reminder"){NavigationLink{ReminderSettingsView()}label:{Label("Choose reminder time",systemImage:"bell")}}
             Section("How to walk a trail"){
                 Text("Change exactly one letter at a time. Keep the word length, use a word from the dictionary, and don’t repeat a word. Spaces, hyphens and rearranging letters are not allowed. Plurals and inflected forms are included.")
                 Text("A step is one letter change. CAT → COT → DOT → DOG takes three steps.")
