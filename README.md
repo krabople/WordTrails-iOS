@@ -2,11 +2,11 @@
 
 Native iPhone word trails for iOS 17 and later. Daily solo play works offline, with optional real-friend co-op through Apple Game Center. No versus mode or bots. The website ways2earn.com is neither accessed nor changed.
 
-Current internal TestFlight beta: **1.1.0 (5)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.1.0-5` (`edcee235ed5194a98b206f0b6627c194c999e9b8`). All 15 engine tests and four iPhone simulator UI tests passed.
+Current internal TestFlight beta: **1.2.0 (1)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.2.0-1` (`b9d2f5bc1ddd97dc5eb307d22024b62860790b7c`). All 21 engine tests and four iPhone simulator UI tests passed.
 
 <img src="docs/screenshots/08-Statistics.png" width="260" alt="Statistics per difficulty"> <img src="docs/screenshots/06-Complete.png" width="260" alt="An optimal route finishing one under par">
 
-## Update 1.1
+## Update 1.2
 
 - 37,819 accepted English word forms across the supported 3–6-letter lengths, including inflections and regional spellings. Includes SNARES. A comprehensive spellchecker dictionary, not a claim to contain every English word or proper name.
 - 40,000 different trails: 10,000 at each difficulty, over 27 years per difficulty before a pair repeats.
@@ -16,11 +16,16 @@ Current internal TestFlight beta: **1.1.0 (5)**, Apple processing `VALID`, assig
 - Daily reminders are opt-in, at a user-selected local time. Repeating iOS local notifications work offline and replace the old scheduled time. System notification settings still apply.
 - Existing seeds, plants, streaks and completed routes persist. Historical pars stay unchanged. Unfinished old solo/bot trails migrate to solo and use the expanded dictionary and updated par.
 
+- Familiar hints now consider a familiar continuation even when the current word is unusual. Uncommon continuations are used only when no equally short familiar route remains. The explanation is in Field notes; the hint itself stays concise.
+- Sixteen new badges bring the total to 24, with 1,000-trail, 365-day and 365-day-streak milestones. New badges trigger an in-app notice. Historical progress is recognised; distinct-trail badges cannot be farmed with replays.
+- Sharing exports an illustrated 1200×1560 result card and a small canonical App Store link. Intermediate route words stay private. The App Store link becomes available at public launch.
+- Daily puzzles remain identical worldwide at each difficulty, resetting at midnight UTC. The 1.2 update preserves the 1.1 catalog exactly. Catalog-size copy and the difficulty legend were removed from the app.
+
 ## Play and privacy
 
 Change exactly one letter per step; no repeated words. Solo offers hints and undo. Optional co-op alternates one word per turn with a real Game Center partner, without hints or undo. Solo needs no account or internet. Invitations, friends, turn data and turn alerts use Apple Game Center; there is no independent account database or website backend. The co-op pool uses data version 2, while existing version-1 co-op matches retain their original dictionary and rules. Earlier versus matches are hidden.
 
-Rewards include seeds, six collectible plants, eight badges, daily streaks and shareable results. Seeds are awarded only once per puzzle and mode. Completed friend co-op trails grow shared gardens. Personal progress remains on the device, without cross-device synchronization.
+Rewards include seeds, six collectible plants, 24 badges, daily streaks and shareable results. Seeds are awarded only once per puzzle and mode. Completed friend co-op trails grow shared gardens. Personal progress remains on the device, without cross-device synchronization.
 
 Original vector landscapes, SF Symbols, system typography, Dynamic Type, VoiceOver and dark mode. No generated raster art, ads, analytics SDK, chat, purchases or contact uploads.
 
@@ -42,3 +47,7 @@ xcodebuild test -project WordTrails.xcodeproj -scheme WordTrails -destination 'p
 Engine tests verify all 40,000 minima independently, legal familiar witnesses, dictionary regressions, statistics, migration, rewards, co-op versioning and reminder times. Simulator UI tests cover solo completion, under-par scoring, statistics, reminder settings, onboarding, dark mode and large text. Two-device Game Center turns and real-device notification delivery require beta testing.
 
 The validation workflow exports native simulator screenshot attachments. The isolated signing workflow archives the exact source revision and checks the bundle/version/build before TestFlight upload. See `docs/RELEASE.md` for release setup and earlier shipping history.
+
+## Public builds
+
+The repository is public. Validation and TestFlight signing use standard GitHub-hosted runners directly in WordTrails-iOS. The five signing secrets are encrypted GitHub Actions repository secrets and are referenced only by the manual release workflow. No signing key is committed. The approved one-run encrypted migration is complete; its temporary runner, local files and migration job were removed. Future Word Trails builds are independent of the earlier shared signing setup.
