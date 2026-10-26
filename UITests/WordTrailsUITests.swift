@@ -7,7 +7,7 @@ final class WordTrailsUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.buttons["continueTrail"].waitForExistence(timeout:30))
         screenshot("09-Dark-LargeText",app)
-        app.buttons["Garden"].tap()
+        app.buttons["Garden"].firstMatch.tap()
         screenshot("10-Garden-Dark-LargeText",app)
     }
     func testCompleteSoloTrailAndEarnSeeds() throws {
@@ -55,7 +55,7 @@ final class WordTrailsUITests: XCTestCase {
         let toggle=app.switches["dailyReminderToggle"]
         XCTAssertTrue(toggle.waitForExistence(timeout:10));XCTAssertEqual(toggle.value as? String,"0")
         screenshot("07-Reminder",app)
-        app.buttons["Done"].tap();app.buttons["Stats"].tap()
+        app.buttons["Done"].tap();app.buttons["Stats"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching:.any)["totalAttempts"].waitForExistence(timeout:10))
         app.buttons["difficultyStats3"].tap()
         XCTAssertTrue(app.staticTexts["Completed"].exists)
@@ -77,9 +77,9 @@ final class WordTrailsUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@","Meadow")).firstMatch.exists)
         XCTAssertFalse(app.staticTexts.matching(NSPredicate(format:"label CONTAINS %@","Woodland")).firstMatch.exists)
         screenshot("14-Trails-Footer",app)
-        app.buttons["Co-op"].tap(); screenshot("03-Coop",app)
-        app.buttons["Garden"].tap(); screenshot("04-Garden",app)
-        app.buttons["Stats"].tap(); screenshot("05-Statistics",app)
+        app.buttons["Co-op"].firstMatch.tap(); screenshot("03-Coop",app)
+        app.buttons["Garden"].firstMatch.tap(); screenshot("04-Garden",app)
+        app.buttons["Stats"].firstMatch.tap(); screenshot("05-Statistics",app)
     }
     func testDailyCompletedAttemptOpensWithoutStartingReplay() throws {
         let app=XCUIApplication();app.launchArguments=["--ui-test"];app.launch()
@@ -105,7 +105,7 @@ final class WordTrailsUITests: XCTestCase {
         tapAfterScrolling(app.buttons["viewCompletedDaily"],app)
         XCTAssertTrue(app.buttons["shareSavedResult"].waitForExistence(timeout:10))
         XCTAssertTrue(app.staticTexts["Shortest possible route"].exists)
-        app.buttons["Stats"].tap()
+        app.buttons["Stats"].firstMatch.tap()
         let attempts=app.descendants(matching:.any)["totalAttempts"]
         let completed=app.descendants(matching:.any)["totalCompleted"]
         XCTAssertTrue(attempts.waitForExistence(timeout:10))

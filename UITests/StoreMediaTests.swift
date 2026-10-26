@@ -43,9 +43,9 @@ final class StoreMediaTests:XCTestCase {
         XCTAssertTrue(app.buttons["shareCard"].waitForExistence(timeout:10))
         try capture("06-Share")
         app.buttons["Done"].tap()
-        tap(app.buttons["Garden"])
+        tap(app.buttons["Garden"].firstMatch)
         try capture("07-Garden")
-        tap(app.buttons["Stats"])
+        tap(app.buttons["Stats"].firstMatch)
         try capture("08-Statistics")
         // Move the first badge to the top, keeping the real list intact.
         let firstBadge=app.descendants(matching:.any).matching(NSPredicate(format:"label BEGINSWITH %@","First footsteps.")).firstMatch
@@ -96,7 +96,7 @@ final class StoreMediaTests:XCTestCase {
         tap(app.buttons["shareResult"])
         XCTAssertTrue(app.buttons["shareCard"].waitForExistence(timeout:10))
         Thread.sleep(forTimeInterval:3)
-        app.buttons["Done"].tap();tap(app.buttons["Garden"])
+        app.buttons["Done"].tap();tap(app.buttons["Garden"].firstMatch)
         Thread.sleep(forTimeInterval:3)
         try Data().write(to:documents.appendingPathComponent("store-video-done"))
     }

@@ -44,10 +44,11 @@ struct ResultShareView:View {
     @State private var sharing=false
     private let appURL=URL(string:"https://apps.apple.com/app/id6827240623")!
     var body:some View {
+        GeometryReader{geometry in
         NavigationStack{
             ScrollView{VStack(spacing:18){
                 if let image{
-                    Image(uiImage:image).resizable().scaledToFit().clipShape(RoundedRectangle(cornerRadius:20)).accessibilityLabel("Word Trails result card. \(run.scoreDescription). \(run.moves) steps, par \(run.puzzle.par).")
+                    Image(uiImage:image).resizable().scaledToFit().frame(maxHeight:max(240,geometry.size.height-240)).clipShape(RoundedRectangle(cornerRadius:20)).accessibilityLabel("Word Trails result card. \(run.scoreDescription). \(run.moves) steps, par \(run.puzzle.par).")
                     Button("Share card",systemImage:"square.and.arrow.up"){sharing=true}.buttonStyle(TrailButton()).accessibilityIdentifier("shareCard")
                     Text("Your route stays a secret. Share your card and a small link to Word Trails.").font(.subheadline).foregroundStyle(.secondary)
                 }else{ProgressView("Preparing your card…")}
@@ -63,6 +64,7 @@ struct ResultShareView:View {
                 #endif
             }
             .sheet(isPresented:$sharing){if let image{ResultActivitySheet(image:image,url:appURL)}}
+        }
         }
     }
 }
