@@ -56,7 +56,7 @@ final class WordTrailsUITests: XCTestCase {
         XCTAssertTrue(toggle.waitForExistence(timeout:10));XCTAssertEqual(toggle.value as? String,"0")
         screenshot("07-Reminder",app)
         app.buttons["Done"].tap();app.tabBars.buttons["Stats"].tap()
-        XCTAssertTrue(app.staticTexts["Trails attempted"].waitForExistence(timeout:10))
+        XCTAssertTrue(app.descendants(matching:.any)["totalAttempts"].waitForExistence(timeout:10))
         app.buttons["difficultyStats3"].tap()
         XCTAssertTrue(app.staticTexts["Completed"].exists)
         screenshot("08-Statistics",app)
@@ -106,10 +106,12 @@ final class WordTrailsUITests: XCTestCase {
         XCTAssertTrue(app.buttons["shareSavedResult"].waitForExistence(timeout:10))
         XCTAssertTrue(app.staticTexts["Shortest possible route"].exists)
         app.tabBars.buttons["Stats"].tap()
-        let attempts=app.cells.containing(.staticText,identifier:"Trails attempted").firstMatch
-        let completed=app.cells.containing(.staticText,identifier:"Trails completed").firstMatch
-        XCTAssertTrue(attempts.staticTexts["1"].exists)
-        XCTAssertTrue(completed.staticTexts["1"].exists)
+        let attempts=app.descendants(matching:.any)["totalAttempts"]
+        let completed=app.descendants(matching:.any)["totalCompleted"]
+        XCTAssertTrue(attempts.waitForExistence(timeout:10))
+        screenshot("16-Stats-After-Reopening",app)
+        XCTAssertEqual(attempts.value as? String,"1")
+        XCTAssertEqual(completed.value as? String,"1")
     }
     private func tapAfterScrolling(_ element:XCUIElement,_ app:XCUIApplication){
         XCTAssertTrue(element.waitForExistence(timeout:15))

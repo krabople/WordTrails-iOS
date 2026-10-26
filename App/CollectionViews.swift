@@ -47,8 +47,8 @@ struct JournalView:View {
     var body:some View {
         List{
             Section("At a glance"){
-                LabeledContent("Trails attempted",value:"\(store.progress.attempts.count)")
-                LabeledContent("Trails completed",value:"\(store.progress.completed.count)")
+                LabeledContent("Trails attempted",value:"\(store.progress.attempts.count)").accessibilityElement(children:.ignore).accessibilityLabel("Trails attempted").accessibilityValue("\(store.progress.attempts.count)").accessibilityIdentifier("totalAttempts")
+                LabeledContent("Trails completed",value:"\(store.progress.completed.count)").accessibilityElement(children:.ignore).accessibilityLabel("Trails completed").accessibilityValue("\(store.progress.completed.count)").accessibilityIdentifier("totalCompleted")
                 LabeledContent("Daily streak",value:"\(store.progress.streak) days")
                 LabeledContent("Badges",value:"\(Badge.all.filter{store.progress.badges.contains($0.id)}.count)")
             }
