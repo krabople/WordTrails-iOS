@@ -66,7 +66,7 @@ struct TrailHome:View {
     @State private var showSettings=false
     @State private var showReminders=false
     private var daily:Puzzle{TrailCatalog.daily(length:length,date:today)}
-    private var dailyAttempt:Run?{store.progress.completedAttempts(puzzleID:daily.id,mode:.solo).first}
+    private var dailyAttempt:Run?{store.progress.completedAttempts(puzzleID:daily.id,mode:.solo).first{ $0.puzzle.start==daily.start && $0.puzzle.goal==daily.goal }}
     var body:some View {
         ScrollView{VStack(alignment:.leading,spacing:22){
             if textSize.isAccessibilitySize{VStack(alignment:.leading,spacing:12){homeHeading;streak}}
