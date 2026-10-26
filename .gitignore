@@ -1,0 +1,11 @@
+.build/
+.swiftpm/
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserstate
+.DS_Store
+*.p12
+*.p8
+*.mobileprovision
+.env*
+! .env.example

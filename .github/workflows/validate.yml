@@ -1,0 +1,52 @@
+name: Validate Word Trails
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wordtrails-validation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - name: Test rules, routes, bots and rewards
+        run: swift test --parallel
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Draw app icon and generate project
+        run: |
+          swift Support/make-icon.swift App/Assets.xcassets/AppIcon.appiconset
+          xcodegen generate
+      - name: Select iPhone simulator
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, os
+          data=json.loads(subprocess.check_output(['xcrun','simctl','list','devices','available','-j']))
+          phones=[d for runtime,devices in data['devices'].items() if 'iOS' in runtime for d in devices if d.get('isAvailable') and d['name'].startswith('iPhone')]
+          if not phones: raise SystemExit('No available iPhone simulator')
+          with open(os.environ['GITHUB_ENV'],'a') as f: f.write('SIMULATOR_ID='+phones[0]['udid']+'\n')
+          PY
+      - name: Compile and run iPhone smoke test
+        run: |
+          set -o pipefail
+          xcodebuild test -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -resultBundlePath .build/WordTrails.xcresult CODE_SIGNING_ALLOWED=NO | tee .build/xcode-test.log
+      - name: Export screenshot attachments
+        if: always()
+        run: |
+          mkdir -p .build/screenshots
+          xcrun xcresulttool export attachments --path .build/WordTrails.xcresult --output-path .build/screenshots || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: WordTrails-validation
+          path: |
+            .build/screenshots/
+            .build/xcode-test.log
+            .build/WordTrails.xcresult/
+          retention-days: 14
