@@ -51,7 +51,7 @@ struct JournalView: View {
                     HStack(spacing:16) {
                         Image(systemName:badge.symbol).font(.title2).foregroundStyle(unlocked ? Palette.ochre : .secondary).frame(width:36)
                         VStack(alignment:.leading,spacing:4) { Text(badge.title).font(.headline); Text(badge.detail).font(.caption).foregroundStyle(.secondary) }
-                        Spacer(); Image(systemName:unlocked ? "checkmark.seal.fill" : "lock").foregroundStyle(unlocked ? Palette.forest : .secondary)
+                        Spacer(); Image(systemName:unlocked ? "checkmark.seal.fill" : "lock").foregroundStyle(unlocked ? Palette.ink : .secondary)
                     }.accessibilityElement(children:.combine).accessibilityLabel("\(badge.title). \(badge.detail). \(unlocked ? "Earned" : "Locked")")
                 }
             }

@@ -41,6 +41,8 @@ struct WelcomeView: View {
 }
 struct TrailHome: View {
     @EnvironmentObject var store: TrailStore
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var today = Date()
     @State private var length = 4
     @State private var mode: PlayMode = .solo
     @State private var guide: Guide = .fern
@@ -48,7 +50,7 @@ struct TrailHome: View {
     @State private var replace: Bool = false
     @State private var pendingDaily = false
     @State private var showSettings = false
-    private var daily: Puzzle { TrailCatalog.daily(length:length) }
+    private var daily: Puzzle { TrailCatalog.daily(length:length,date:today) }
     var body: some View {
         ScrollView { VStack(alignment:.leading,spacing:22) {
             HStack { VStack(alignment:.leading,spacing:6) { Text("WORD TRAILS").font(.caption.weight(.semibold)).tracking(3); Text("Find your way.").font(.system(.largeTitle,design:.serif)) }; Spacer(); Label("\(store.progress.streak)",systemImage:"flame").font(.title3).accessibilityLabel("\(store.progress.streak) day streak") }
@@ -75,6 +77,14 @@ struct TrailHome: View {
         .background(Palette.canvas).navigationTitle("").toolbar { Button { showSettings = true } label:{ Image(systemName:"gearshape") }.accessibilityLabel("Settings and help") }
         .navigationDestination(isPresented:$playing) { LocalPlayView() }
         .sheet(isPresented:$showSettings) { NavigationStack { SettingsView() } }
+        .onChange(of:scenePhase) { _,phase in if phase == .active { today = Date() } }
+        .task {
+            while !Task.isCancelled {
+                today = Date()
+                let nextDay = (floor(today.timeIntervalSince1970 / 86400) + 1) * 86400
+                do { try await Task.sleep(for:.seconds(max(1,nextDay - Date().timeIntervalSince1970))) } catch { return }
+            }
+        }
         .confirmationDialog("Start a new trail? Your current unfinished trail will be replaced.",isPresented:$replace,titleVisibility:.visible) { Button("Start new trail") { start(daily:pendingDaily) }; Button("Keep current trail",role:.cancel) {} }
     }
     private func requestStart(daily: Bool) { if let run = store.run, !run.isComplete { pendingDaily = daily; replace = true } else { start(daily:daily) } }

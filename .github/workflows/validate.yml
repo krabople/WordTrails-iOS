@@ -33,10 +33,21 @@ jobs:
           if not phones: raise SystemExit('No available iPhone simulator')
           with open(os.environ['GITHUB_ENV'],'a') as f: f.write('SIMULATOR_ID='+phones[0]['udid']+'\n')
           PY
-      - name: Compile and run iPhone smoke test
+      - name: Compile iPhone app and tests
+        timeout-minutes: 15
         run: |
           set -o pipefail
-          xcodebuild test -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -resultBundlePath .build/WordTrails.xcresult CODE_SIGNING_ALLOWED=NO | tee .build/xcode-test.log
+          xcodebuild build-for-testing -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -derivedDataPath .build/DerivedData CODE_SIGNING_ALLOWED=NO | tee .build/xcode-build.log
+      - name: Boot selected iPhone simulator
+        timeout-minutes: 8
+        run: |
+          xcrun simctl boot "$SIMULATOR_ID" || true
+          xcrun simctl bootstatus "$SIMULATOR_ID" -b
+      - name: Play complete games and capture visual checks
+        timeout-minutes: 15
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -derivedDataPath .build/DerivedData -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 -resultBundlePath .build/WordTrails.xcresult CODE_SIGNING_ALLOWED=NO | tee .build/xcode-test.log
       - name: Export screenshot attachments
         if: always()
         run: |
@@ -49,5 +60,6 @@ jobs:
           path: |
             .build/screenshots/
             .build/xcode-test.log
+            .build/xcode-build.log
             .build/WordTrails.xcresult/
           retention-days: 14

@@ -37,6 +37,7 @@ enum SocialError: LocalizedError {
     @Published var loadingFriends = false
     @Published var showMatchmaker = false
     var newMode: PlayMode = .coop
+    private var authenticatedPlayerID: String?
     var newPuzzle: Puzzle = TrailCatalog.daily(length:4)
     var localID: String { GKLocalPlayer.local.gamePlayerID }
     var myTurn: Bool { selected?.status == .open && selected?.currentParticipant?.player?.gamePlayerID == localID }
@@ -53,6 +54,11 @@ enum SocialError: LocalizedError {
                 guard let self else { return }
                 if let vc { Self.presenter?.present(vc,animated:true); return }
                 self.authenticated = GKLocalPlayer.local.isAuthenticated
+                let identity = self.authenticated ? GKLocalPlayer.local.gamePlayerID : nil
+                if identity != self.authenticatedPlayerID {
+                    self.friends = []; self.matches = []; self.selected = nil; self.state = nil
+                    self.authenticatedPlayerID = identity
+                }
                 if let failure { self.error = failure.localizedDescription }
                 if self.authenticated { GKLocalPlayer.local.register(self); await self.refresh() }
             }
@@ -60,14 +66,16 @@ enum SocialError: LocalizedError {
     }
     func refresh() async {
         guard authenticated else { return }
+        let identity = localID
         busy = true; defer { busy = false }
-        do { matches = try await GKTurnBasedMatch.loadMatches().sorted { $0.creationDate > $1.creationDate } }
+        do { let loaded = try await GKTurnBasedMatch.loadMatches().sorted { $0.creationDate > $1.creationDate }; if authenticated && identity == localID { matches = loaded } }
         catch { self.error = error.localizedDescription }
     }
     func loadFriends() async {
         guard authenticated else { error = SocialError.unavailable.localizedDescription; return }
+        let identity = localID
         loadingFriends = true; defer { loadingFriends = false }
-        do { friends = try await GKLocalPlayer.local.loadFriends() }
+        do { let loaded = try await GKLocalPlayer.local.loadFriends(); if authenticated && identity == localID { friends = loaded } }
         catch { self.error = error.localizedDescription }
     }
     func addFriend() {
@@ -80,10 +88,12 @@ enum SocialError: LocalizedError {
         showMatchmaker = true
     }
     func open(_ match: GKTurnBasedMatch) async {
+        let identity = localID
         busy = true; defer { busy = false }
         do {
             // Always reload before showing a match; the inbox can contain older snapshots.
             let fresh = try await GKTurnBasedMatch.load(withID:match.matchID)
+            guard authenticated, identity == localID else { throw SocialError.unavailable }
             var content: SharedTrail
             if let data = fresh.matchData, !data.isEmpty { content = try JSONDecoder().decode(SharedTrail.self,from:data) }
             else {
@@ -98,9 +108,11 @@ enum SocialError: LocalizedError {
     }
     func submit(_ word: String, progress: TrailStore) async {
         guard !busy, let selected, let original = state else { return }
+        let submittingPlayer = localID
         busy = true; defer { busy = false }
         do {
             let fresh = try await GKTurnBasedMatch.load(withID:selected.matchID)
+            guard authenticated, localID == submittingPlayer else { throw SocialError.unavailable }
             guard fresh.status == .open, fresh.currentParticipant?.player?.gamePlayerID == localID else { throw SocialError.notTurn }
             guard let data = fresh.matchData else { throw SocialError.invalid }
             var next = try JSONDecoder().decode(SharedTrail.self,from:data); try next.validate()
@@ -135,6 +147,7 @@ enum SocialError: LocalizedError {
             } else if next.mode == .coop || next.racers[localID]?.isComplete == true {
                 try await fresh.endTurn(withNextParticipants:others,turnTimeout:GKTurnTimeoutDefault,match:encoded)
             } else { try await fresh.saveCurrentTurn(withMatch:encoded) }
+            guard authenticated, localID == submittingPlayer else { throw SocialError.unavailable }
             self.selected = fresh; state = next; error = nil
             if let run = completedRun { record(run,in:progress,state:next) }
         } catch { self.error = error.localizedDescription }
