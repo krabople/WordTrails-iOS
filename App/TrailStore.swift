@@ -57,7 +57,7 @@ import TrailCore
     func undo(){guard var next=run else{return};next.undo();run=next;message="";save()}
     func hint(){
         guard var next=run,!next.isComplete else{return}
-        if let hint=next.hintSuggestion(){next.hints+=1;run=next;message="Try \(hint.word). " + (hint.requiresUnfamiliarWords ? "The shortest remaining route uses uncommon words. Undo a step to look for a familiar route. ":"") + "Hints turn off the unassisted bonus.";save()}
+        if let hint=next.hintSuggestion(){next.hints+=1;run=next;message="Try \(hint.word). Hints turn off the unassisted bonus.";save()}
         else{message="No forward path from here. Undo a step to rejoin the trail."}
     }
     @discardableResult func record(_ run:Run)->Int {

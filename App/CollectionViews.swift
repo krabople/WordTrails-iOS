@@ -110,7 +110,7 @@ struct SettingsView:View {
                 Text("Change exactly one letter at a time. Keep the word length, use a word from the dictionary, and don’t repeat a word. Spaces, hyphens and rearranging letters are not allowed. Plurals and inflected forms are included.")
                 Text("A step is one letter change. CAT → COT → DOT → DOG takes three steps.")
                 Text("Par is your target, not the minimum. Three- and four-letter trails allow one step above the shortest route; five- and six-letter trails allow two. Finishing in fewer steps puts you under par. Par is a difficulty-based target, not a measured player average.")
-                Text("Every new trail has a shortest solution using familiar words. More unusual dictionary words are also accepted, but aren’t required to reach the minimum. Hints prefer familiar shortest routes where possible.")
+                Text("Every new trail has a shortest solution using familiar words. More unusual dictionary words are also accepted, but aren’t required to reach the minimum. Hints prefer familiar words whenever they can still complete a shortest route from your current position. Your earlier choices may leave a shortest continuation that needs unusual words; undo can open up other routes.")
                 Text("Solo trails have hints and undo. Optional co-op trails alternate turns with a friend through Game Center. Both players share the route and score; online trails do not have hints or undo.")
                 Text("A move that would make the goal unreachable without repeating a word is rejected.")
             }
