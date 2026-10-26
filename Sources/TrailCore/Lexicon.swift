@@ -23,7 +23,7 @@ public final class Lexicon: @unchecked Sendable {
     public func contains(_ word:String)->Bool {words.contains(word.uppercased())}
     public static func adjacent(_ a:String,_ b:String)->Bool {a.count==b.count && zip(a,b).filter {$0 != $1}.count==1}
     public func neighbors(_ word:String)->[String] {adjacency[word] ?? []}
-    public func path(from start:String,to goal:String,avoiding:Set<String> =[])->[String]? {
+    public func path(from start:String,to goal:String,avoiding:Set<String> = [])->[String]? {
         guard contains(start),contains(goal),start.count==goal.count else{return nil}
         if start==goal{return[start]}
         var queue=[start],head=0,parent:[String:String]=[:],seen=avoiding;seen.insert(start)

@@ -104,11 +104,11 @@ public struct Badge:Identifiable,Sendable {
 public struct Progress:Codable,Sendable {
     public var completed:[Run]=[]
     public var attempts:[Run]=[]
-    public var claimed:Set<String> =[]
-    public var dailyDays:Set<String> =[]
+    public var claimed:Set<String> = []
+    public var dailyDays:Set<String> = []
     public var seeds=0
-    public var planted:Set<String> =[]
-    public var badges:Set<String> =[]
+    public var planted:Set<String> = []
+    public var badges:Set<String> = []
     public var sharedGardens:[SharedGarden]=[]
     public var trackingStartedAt:Date?
     public init(){}
