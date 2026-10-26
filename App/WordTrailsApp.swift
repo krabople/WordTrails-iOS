@@ -21,6 +21,7 @@ struct RootView: View {
             NavigationStack { JournalView() }.tabItem { Label("Journal",systemImage:"book.closed") }.tag(3)
         }
         .sheet(isPresented:$store.showWelcome) { WelcomeView() }
+        .onChange(of:social.selected?.matchID) { _,value in if value != nil { tab = 1 } }
         .alert("Saved progress needs attention",isPresented:$store.showRecoveryWarning) { Button("Keep playing this session",role:.cancel) {} } message: { Text(store.persistenceError ?? "") }
     }
 }
@@ -62,7 +63,7 @@ struct TrailHome: View {
                 }
             }
             if let run = store.run, !run.isComplete {
-                Button { playing = true } label: { PaperCard { HStack { Image(systemName:"arrow.uturn.forward"); VStack(alignment:.leading) { Text("Continue your trail").font(.headline); Text("\(run.puzzle.start) → \(run.puzzle.goal) · \(run.moves) steps").font(.caption) }; Spacer(); Image(systemName:"chevron.right") } } }.buttonStyle(.plain)
+                Button { playing = true } label: { PaperCard { HStack { Image(systemName:"arrow.uturn.forward"); VStack(alignment:.leading) { Text("Continue your trail").font(.headline); Text("\(run.puzzle.start) → \(run.puzzle.goal) · \(run.moves) steps").font(.caption) }; Spacer(); Image(systemName:"chevron.right") } } }.buttonStyle(.plain).accessibilityIdentifier("continueTrail")
             }
             Text("Take another path").font(.system(.title2,design:.serif))
             Picker("Play mode",selection:$mode) { ForEach(PlayMode.allCases) { Text($0.title).tag($0) } }.pickerStyle(.segmented)

@@ -11,14 +11,14 @@ public enum Guide: String, Codable, CaseIterable, Identifiable, Sendable {
     public var name: String { rawValue.capitalized }
     public var caption: String { switch self { case .pip: "Gentle · takes the scenic route"; case .fern: "Thoughtful · a little challenge"; case .oak: "Expert · finds the shortest route" } }
     public var symbol: String { switch self { case .pip: "bird.fill"; case .fern: "leaf.fill"; case .oak: "tree.fill" } }
-    public func route(for puzzle: Puzzle, lexicon: Lexicon = .shared) -> [String] {
-        let shortest = lexicon.path(from: puzzle.start, to: puzzle.goal) ?? [puzzle.start]
+    public func route(for puzzle: Puzzle, lexicon: Lexicon = .shared, avoiding: Set<String> = []) -> [String] {
+        let shortest = lexicon.path(from: puzzle.start, to: puzzle.goal, avoiding:avoiding) ?? [puzzle.start]
         guard self != .oak else { return shortest }
         // A legal detour, never invented words or repeated nodes. Deterministic and auditable.
         let budget = self == .pip ? 5 : 2
         var best = shortest
-        for neighbor in lexicon.neighbors(puzzle.start) where neighbor != shortest.dropFirst().first {
-            if let tail = lexicon.path(from: neighbor, to: puzzle.goal, avoiding: [puzzle.start]) {
+        for neighbor in lexicon.neighbors(puzzle.start) where neighbor != shortest.dropFirst().first && !avoiding.contains(neighbor) {
+            if let tail = lexicon.path(from: neighbor, to: puzzle.goal, avoiding: avoiding.union([puzzle.start])) {
                 let route = [puzzle.start] + tail
                 if route.count > best.count && route.count <= shortest.count + budget { best = route }
             }
@@ -33,6 +33,7 @@ public enum MoveError: String, Error, LocalizedError, Sendable {
     case unchanged = "Change exactly one letter."
     case unknown = "That word isn’t in the Word Trails dictionary."
     case repeated = "You’ve visited that word. Undo a step to try a new route."
+    case deadEnd = "That step would leave no route to the goal without repeating a word. Try another word."
     public var errorDescription: String? { rawValue }
 }
 public struct Run: Codable, Hashable, Identifiable, Sendable {
@@ -65,6 +66,7 @@ public struct Run: Codable, Hashable, Identifiable, Sendable {
         guard Lexicon.adjacent(chain.last!, word) else { throw MoveError.unchanged }
         guard lexicon.contains(word) else { throw MoveError.unknown }
         guard !chain.contains(word) else { throw MoveError.repeated }
+        guard lexicon.path(from:word,to:puzzle.goal,avoiding:Set(chain)) != nil else { throw MoveError.deadEnd }
         chain.append(word); totalMoves += 1
         if isComplete { finishedAt = Date() }
     }
@@ -76,7 +78,8 @@ public struct Run: Codable, Hashable, Identifiable, Sendable {
         lexicon.path(from: chain.last!, to: puzzle.goal, avoiding: Set(chain.dropLast()))?.dropFirst().first
     }
     public mutating func guideStep() throws {
-        guard let hint = nextHint() else { return }
+        let remaining = Puzzle(id:puzzle.id,start:chain.last!,goal:puzzle.goal,par:puzzle.par)
+        guard let hint = guide?.route(for:remaining,avoiding:Set(chain.dropLast())).dropFirst().first ?? nextHint() else { return }
         try submit(hint)
     }
     public func isValid(lexicon: Lexicon = .shared) -> Bool {
@@ -105,6 +108,7 @@ public struct Progress: Codable, Sendable {
     public var seeds = 0
     public var planted: Set<String> = []
     public var badges: Set<String> = []
+    public var sharedGardens: [SharedGarden] = []
     public init() {}
     public var streak: Int { streak(at: Date()) }
     public func streak(at date: Date) -> Int {
@@ -134,6 +138,7 @@ public struct Progress: Codable, Sendable {
         if streak >= 7 { badges.insert("week") }
         if streak >= 30 { badges.insert("month") }
         if run.mode == .coop { badges.insert("coop") }
+        if run.mode == .coop, let guide = run.guide { rememberGarden(id:"bot-\(guide.id)",name:"\(guide.name) · Bot",trailID:run.id.uuidString) }
         if run.mode == .versus, let bot = run.botMoves, run.moves < bot { badges.insert("versus") }
         if run.puzzle.length == 6 { badges.insert("expert") }
         return earned
@@ -142,6 +147,17 @@ public struct Progress: Codable, Sendable {
         guard Plant.all.contains(where: {$0.id == id}), !planted.contains(id), seeds >= 10 else { return false }
         seeds -= 10; planted.insert(id); return true
     }
+    public mutating func rememberGarden(id:String,name:String,trailID:String) {
+        if let index = sharedGardens.firstIndex(where:{$0.id == id}) { sharedGardens[index].completedTrails.insert(trailID); sharedGardens[index].name = name }
+        else { sharedGardens.append(SharedGarden(id:id,name:name,completedTrails:[trailID])) }
+    }
+}
+public struct SharedGarden: Codable, Identifiable, Sendable {
+    public let id:String
+    public var name:String
+    public var completedTrails:Set<String>
+    public var plants:Int { [1,3,5,8,12,20].filter {completedTrails.count >= $0}.count }
+    public var nextMilestone:Int? { [1,3,5,8,12,20].first {$0 > completedTrails.count} }
 }
 public struct Plant: Identifiable, Sendable {
     public let id: String; public let name: String; public let symbol: String

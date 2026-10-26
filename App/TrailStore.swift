@@ -23,6 +23,13 @@ import TrailCore
                 progress = saved.progress; run = saved.run
             }
         } catch { persistenceError = "Your saved progress couldn’t be opened. It has been kept on this device. \(error.localizedDescription)"; showRecoveryWarning = true }
+        #if DEBUG
+        if testing && ProcessInfo.processInfo.arguments.contains("--example-trail") {
+            let coop = ProcessInfo.processInfo.arguments.contains("--example-coop")
+            run = Run(puzzle:Puzzle(id:"CAT-DOG",start:"CAT",goal:"DOG",par:3),mode:coop ? .coop : .solo,guide:coop ? .oak : nil)
+            showWelcome = false
+        }
+        #endif
     }
     struct Saved: Codable { var progress: TrailCore.Progress; var run: Run? }
     func save() {

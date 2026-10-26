@@ -10,7 +10,7 @@ Change one letter at a time. Each step must be in the bundled 3–6-letter dicti
 - Solo: hints and undo. Bot co-op: alternate one-word moves. Bot versus: compare completed route lengths, ties draw, no hints or undo.
 - Pip takes legal detours where possible; Fern takes shorter detours; Oak always uses a shortest path. Every guide is labelled **Bot**. No fake human accounts, network, or external AI service.
 - Human co-op: send one word per turn. Human versus: finish your own route, then pass the turn. Routes are revealed after both complete. No hints, undo, or speed advantage. Native Game Center handles invites, matchmaking, forfeiting and notifications.
-- Seeds, six collectible plants, nine local badges, streaks, shareable results, saved current trail, and route history. Replays do not farm seeds.
+- Seeds, six collectible plants, nine local badges, streaks, shareable results, saved current trail, and route history. Replays do not farm seeds. Completed co-op trails also grow a shared garden with each human or bot partner.
 
 ## Build and verify
 
@@ -31,4 +31,4 @@ Original code-drawn landscape, flat shapes, deliberate spacing, SF Symbols and s
 
 ## Content
 
-The word list is authored for the game and intentionally bounded. It is not a complete English dictionary. Browse all accepted words in Field notes. Puzzle generation, bots and hints share this versioned dictionary. Do not change it during a live beta without bumping the multiplayer data version and handling older matches.
+The 5,090-word list is authored for the game and intentionally bounded. It is not a complete English dictionary. Browse all accepted words in Field notes. The 242-trail catalog is built offline with `node scripts/generate-trails.mjs` for fast launch; Swift tests independently verify all routes and shortest-path pars. Bots and hints share this versioned dictionary. Steps that would make the destination unreachable are rejected. Do not change the dictionary during a live beta without bumping the multiplayer data version and handling older matches.

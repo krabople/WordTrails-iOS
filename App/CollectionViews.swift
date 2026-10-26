@@ -3,6 +3,7 @@ import TrailCore
 
 struct GardenView: View {
     @EnvironmentObject private var store: TrailStore
+    @EnvironmentObject private var social: GameCenterService
     @State private var confirm: String?
     var body: some View {
         ScrollView { VStack(alignment:.leading,spacing:22) {
@@ -21,7 +22,19 @@ struct GardenView: View {
                 }
             }
             Text("Your garden is personal to this device. There are no purchases, ads, or expiring rewards.").font(.caption).foregroundStyle(.secondary)
+            Text("Gardens together").font(.system(.title2,design:.serif))
+            Text("Every completed co-op trail grows a garden with that partner. New plants appear after 1, 3, 5, 8, 12 and 20 walks together. Human partners see the same milestones from their shared match history.").font(.subheadline).foregroundStyle(.secondary)
+            if store.progress.sharedGardens.isEmpty { Text("Finish a co-op trail with a friend or a bot guide to plant your first shared garden.").foregroundStyle(.secondary) }
+            ForEach(store.progress.sharedGardens) { garden in
+                PaperCard { VStack(alignment:.leading,spacing:12) {
+                    Text("You + \(garden.name)").font(.headline)
+                    Landscape(planted:garden.plants).frame(height:100)
+                    Text("\(garden.completedTrails.count) walks together · \(garden.plants) plants").font(.subheadline)
+                    if let next = garden.nextMilestone { Text("Next plant at \(next) co-op trails").font(.caption).foregroundStyle(.secondary) }
+                } }
+            }
         }.padding(20) }.background(Color(.systemGroupedBackground)).navigationTitle("Garden")
+        .task { social.syncGardens(into:store) }
         .confirmationDialog("Plant for 10 seeds?",isPresented:Binding(get:{confirm != nil},set:{if !$0 {confirm = nil}}),titleVisibility:.visible) { Button("Plant") { if let confirm { store.plant(confirm) }; confirm = nil }; Button("Cancel",role:.cancel) { confirm = nil } }
     }
 }
@@ -67,7 +80,7 @@ struct SettingsView: View {
                 Text("Change exactly one letter at a time. Keep the word length, use an English word in the game dictionary, and don’t repeat a word. No names, spaces, hyphens, or rearranging letters. Plurals and inflections are allowed when included.")
                 Text("Par is the shortest possible route in the bundled dictionary. A trail’s steps count letter changes, so CAT → COT → DOT → DOG is three steps.")
                 Text("Solo: hints and undo are available. Bot co-op: take turns with a guide; undo returns to your previous turn. Versus and online play: no hints or undo. Versus compares final route length, with ties drawn.")
-                Text("If you reach a dead end, solo and bot co-op allow undo. Online players can forfeit in Game Center’s match picker. There are no ranked prizes or cash rewards.")
+                Text("Moves that would leave no route to the destination are rejected, so you cannot become trapped. Online players can forfeit in Game Center’s match picker. There are no ranked prizes or cash rewards.")
             }
             Section("Dictionary") {
                 Text("\(Lexicon.shared.words.count.formatted()) hand-selected English words, 3–6 letters. The same version is used by everyone, including the bots. The dictionary is deliberately bounded: not every English word is accepted. Both players need a compatible app version.")
@@ -76,6 +89,7 @@ struct SettingsView: View {
             Section("Daily trails and rewards") {
                 Text("A new puzzle for each word length appears at 00:00 UTC. Finish a current daily trail to build your streak. Finishing yesterday’s saved trail still earns seeds but does not backdate your streak. Seeds are awarded only once for each trail and mode.")
                 Text("The garden has six collectible plants. Badge progress includes trails with bot guides. Your garden, journal, badges and saved solo trail stay on this device; reinstalling the app removes them unless restored with an iPhone backup.")
+                Text("Shared gardens grow through completed co-op trails with each partner. Human shared milestones can be recovered from completed Game Center matches. Keep completed matches in Game Center if you want to recover that history on another device.")
             }
             Section("Friends and privacy") {
                 Text("Solo and bots need no account or internet connection. Human play uses Apple Game Center for identity, friends, matchmaking, match storage and turn alerts. You explicitly choose when to sign in or request friend access. Word Trails has no advertising, analytics SDK, chat, contact upload or independent account database.")

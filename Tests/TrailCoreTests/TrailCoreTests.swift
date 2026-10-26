@@ -67,4 +67,22 @@ final class TrailCoreTests: XCTestCase {
         XCTAssertEqual(progress.streak(at:today),7)
         XCTAssertEqual(progress.streak(at:today.addingTimeInterval(86400)),0)
     }
+    func testMoveCannotTrapPlayer() throws {
+        let lex = Lexicon(words:["CAT","COT","DOT","DOG","BAT"])
+        var run = Run(puzzle:Puzzle(id:"trap",start:"CAT",goal:"DOG",par:3))
+        XCTAssertThrowsError(try run.submit("BAT",lexicon:lex)) { XCTAssertEqual($0 as? MoveError,.deadEnd) }
+        XCTAssertEqual(run.chain,["CAT"])
+        try run.submit("COT",lexicon:lex)
+        XCTAssertNotNil(run.nextHint(lexicon:lex))
+    }
+    func testSharedGardenDoesNotDoubleCountSync() {
+        var progress = Progress()
+        for _ in 0..<3 { progress.rememberGarden(id:"friend",name:"Friend",trailID:"same") }
+        XCTAssertEqual(progress.sharedGardens.first?.completedTrails.count,1)
+        XCTAssertEqual(progress.sharedGardens.first?.plants,1)
+        progress.rememberGarden(id:"friend",name:"Friend",trailID:"second")
+        progress.rememberGarden(id:"friend",name:"Friend",trailID:"third")
+        XCTAssertEqual(progress.sharedGardens.first?.plants,2)
+        XCTAssertEqual(progress.sharedGardens.first?.nextMilestone,5)
+    }
 }

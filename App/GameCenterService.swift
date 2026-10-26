@@ -11,8 +11,9 @@ struct SharedTrail: Codable {
     func validate() throws {
         guard version == 1, mode != .solo,
               TrailCatalog.all.contains(where: { $0.start == puzzle.start && $0.goal == puzzle.goal && $0.par == puzzle.par }),
-              coop.puzzle == puzzle, coop.isValid(), racers.count <= 2,
-              racers.values.allSatisfy({$0.puzzle == puzzle && $0.isValid() && $0.hints == 0}) else { throw SocialError.invalid }
+              coop.puzzle == puzzle, coop.isValid(), coop.mode == .coop, coop.guide == nil, coop.hints == 0, racers.count <= 2,
+              Set(racers.values.map(\.id)).count == racers.count,
+              racers.values.allSatisfy({$0.puzzle == puzzle && $0.mode == .versus && $0.guide == nil && $0.isValid() && $0.hints == 0}) else { throw SocialError.invalid }
     }
 }
 enum SocialError: LocalizedError {
@@ -141,12 +142,24 @@ enum SocialError: LocalizedError {
     func record(_ run: Run, in store: TrailStore, state: SharedTrail) {
         let already = store.progress.completed.contains {$0.id == run.id}
         store.progress.record(run)
+        if state.mode == .coop, let match = selected, let friend = match.participants.compactMap(\.player).first(where:{$0.gamePlayerID != localID}) {
+            store.progress.rememberGarden(id:friend.gamePlayerID,name:friend.displayName,trailID:run.id.uuidString)
+        }
         if !already && state.mode == .versus, let mine = state.racers[localID], let other = state.racers.first(where:{$0.key != localID})?.value, mine.moves < other.moves { store.progress.badges.insert("versus") }
         store.save()
     }
     func syncCompleted(into store: TrailStore) {
         guard let state, selected?.status == .ended else { return }
         if let run = myRun, run.isComplete { record(run,in:store,state:state) }
+    }
+    func syncGardens(into store: TrailStore) {
+        for match in matches where match.status == .ended {
+            guard let data = match.matchData, let content = try? JSONDecoder().decode(SharedTrail.self,from:data),
+                  (try? content.validate()) != nil, content.mode == .coop, content.coop.isComplete,
+                  let friend = match.participants.compactMap(\.player).first(where:{$0.gamePlayerID != localID}) else { continue }
+            store.progress.rememberGarden(id:friend.gamePlayerID,name:friend.displayName,trailID:content.coop.id.uuidString)
+        }
+        store.save()
     }
     nonisolated func player(_ player: GKPlayer, receivedTurnEventFor match: GKTurnBasedMatch, didBecomeActive: Bool) {
         Task { @MainActor in await refresh(); if selected?.matchID == match.matchID || didBecomeActive { await open(match) } }

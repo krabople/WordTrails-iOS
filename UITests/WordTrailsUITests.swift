@@ -1,6 +1,33 @@
 import XCTest
 
 final class WordTrailsUITests: XCTestCase {
+    func testCompleteSoloTrailAndEarnSeeds() throws {
+        let app = XCUIApplication(); app.launchArguments = ["--ui-test","--example-trail"]; app.launch()
+        XCTAssertTrue(app.buttons["continueTrail"].waitForExistence(timeout:30))
+        app.buttons["continueTrail"].tap()
+        let input = app.textFields["wordInput"]
+        XCTAssertTrue(input.waitForExistence(timeout:10))
+        for word in ["COT","DOT","DOG"] { input.tap(); input.typeText(word+"\n") }
+        XCTAssertTrue(app.staticTexts["Trail complete"].waitForExistence(timeout:5))
+        XCTAssertTrue(app.staticTexts["+5 seeds for your garden"].exists)
+        screenshot("06-Complete",app)
+    }
+    func testBotCoopAndSharedGarden() throws {
+        let app = XCUIApplication(); app.launchArguments = ["--ui-test","--example-trail","--example-coop"]; app.launch()
+        XCTAssertTrue(app.buttons["continueTrail"].waitForExistence(timeout:30))
+        app.buttons["continueTrail"].tap()
+        let input = app.textFields["wordInput"]
+        XCTAssertTrue(input.waitForExistence(timeout:10))
+        input.tap(); input.typeText("COT\n")
+        XCTAssertTrue(app.staticTexts["Oak · Bot"].waitForExistence(timeout:10))
+        input.tap(); input.typeText("DOG\n")
+        XCTAssertTrue(app.staticTexts["Trail complete"].waitForExistence(timeout:5))
+        screenshot("07-Coop",app)
+        app.navigationBars.buttons.element(boundBy:0).tap(); app.tabBars.buttons["Garden"].tap()
+        app.swipeUp(); app.swipeUp()
+        XCTAssertTrue(app.staticTexts["You + Oak · Bot"].waitForExistence(timeout:5))
+        screenshot("08-SharedGarden",app)
+    }
     func testFirstTrailAndCollections() throws {
         let app = XCUIApplication(); app.launchArguments = ["--ui-test"]; app.launch()
         app.buttons["Take the first step"].waitForExistence(timeout:30)
