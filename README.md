@@ -2,6 +2,10 @@
 
 Native iPhone word trails for iOS 17 and later. Daily solo play works offline, with optional real-friend co-op through Apple Game Center. No versus mode or bots. The website ways2earn.com is neither accessed nor changed.
 
+Current internal TestFlight beta: **1.1.0 (5)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.1.0-5` (`edcee235ed5194a98b206f0b6627c194c999e9b8`). All 15 engine tests and four iPhone simulator UI tests passed.
+
+<img src="docs/screenshots/08-Statistics.png" width="260" alt="Statistics per difficulty"> <img src="docs/screenshots/06-Complete.png" width="260" alt="An optimal route finishing one under par">
+
 ## Update 1.1
 
 - 37,819 accepted English word forms across the supported 3–6-letter lengths, including inflections and regional spellings. Includes SNARES. A comprehensive spellchecker dictionary, not a claim to contain every English word or proper name.
