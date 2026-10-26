@@ -3,7 +3,7 @@ import XCTest
 final class WordTrailsUITests: XCTestCase {
     func testDarkModeAtLargeTextSize() throws {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-test","--example-trail","-AppleInterfaceStyle","Dark","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launchArguments = ["--ui-test","--example-trail","--dark-mode","-UIPreferredContentSizeCategoryName","UICTContentSizeCategoryAccessibilityXXXL"]
         app.launch()
         XCTAssertTrue(app.buttons["continueTrail"].waitForExistence(timeout:30))
         screenshot("09-Dark-LargeText",app)

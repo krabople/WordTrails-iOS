@@ -29,7 +29,7 @@ struct GardenView: View {
                 PaperCard { VStack(alignment:.leading,spacing:12) {
                     Text("You + \(garden.name)").font(.headline)
                     Landscape(planted:garden.plants).frame(height:100)
-                    Text("\(garden.completedTrails.count) walks together · \(garden.plants) plants").font(.subheadline)
+                    Text("\(garden.completedTrails.count) \(garden.completedTrails.count == 1 ? "walk" : "walks") together · \(garden.plants) \(garden.plants == 1 ? "plant" : "plants")").font(.subheadline)
                     if let next = garden.nextMilestone { Text("Next plant at \(next) co-op trails").font(.caption).foregroundStyle(.secondary) }
                 } }
             }

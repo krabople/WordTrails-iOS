@@ -4,8 +4,14 @@ import TrailCore
 @main struct WordTrailsApp: App {
     @StateObject private var store = TrailStore()
     @StateObject private var social = GameCenterService()
+    private var testingColorScheme: ColorScheme? {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--ui-test") && ProcessInfo.processInfo.arguments.contains("--dark-mode") { return .dark }
+        #endif
+        return nil
+    }
     var body: some Scene {
-        WindowGroup { RootView().environmentObject(store).environmentObject(social).tint(Palette.ink) }
+        WindowGroup { RootView().environmentObject(store).environmentObject(social).tint(Palette.ink).preferredColorScheme(testingColorScheme) }
     }
 }
 
@@ -42,6 +48,7 @@ struct WelcomeView: View {
 struct TrailHome: View {
     @EnvironmentObject var store: TrailStore
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var textSize
     @State private var today = Date()
     @State private var length = 4
     @State private var mode: PlayMode = .solo
@@ -53,13 +60,17 @@ struct TrailHome: View {
     private var daily: Puzzle { TrailCatalog.daily(length:length,date:today) }
     var body: some View {
         ScrollView { VStack(alignment:.leading,spacing:22) {
-            HStack { VStack(alignment:.leading,spacing:6) { Text("WORD TRAILS").font(.caption.weight(.semibold)).tracking(3); Text("Find your way.").font(.system(.largeTitle,design:.serif)) }; Spacer(); Label("\(store.progress.streak)",systemImage:"flame").font(.title3).accessibilityLabel("\(store.progress.streak) day streak") }
+            if textSize.isAccessibilitySize {
+                VStack(alignment:.leading,spacing:12) { homeHeading; streak }
+            } else { HStack { homeHeading; Spacer(); streak } }
             Landscape(planted:store.progress.planted.count).frame(height:155).background(Palette.paper,in:RoundedRectangle(cornerRadius:24)).clipShape(RoundedRectangle(cornerRadius:24))
             Picker("Word length",selection:$length) { ForEach(3...6,id:\.self) { Text("\($0) letters").tag($0) } }.pickerStyle(.segmented)
             PaperCard {
                 VStack(alignment:.leading,spacing:16) {
-                    HStack { Label("Daily trail",systemImage:"sun.max").font(.headline); Spacer(); Text("\(daily.par) steps at par").font(.caption).foregroundStyle(.secondary) }
-                    HStack { Text(daily.start); Image(systemName:"arrow.right").font(.title3); Text(daily.goal) }.font(.system(.largeTitle,design:.serif,weight:.medium))
+                    if textSize.isAccessibilitySize {
+                        VStack(alignment:.leading,spacing:8) { Label("Daily trail",systemImage:"sun.max").font(.headline); Text("\(daily.par) steps at par").font(.caption).foregroundStyle(.secondary) }
+                    } else { HStack { Label("Daily trail",systemImage:"sun.max").font(.headline); Spacer(); Text("\(daily.par) steps at par").font(.caption).foregroundStyle(.secondary) } }
+                    HStack { Text(daily.start); Image(systemName:"arrow.right").font(.title3); Text(daily.goal) }.font(.system(.largeTitle,design:.serif,weight:.medium)).lineLimit(1).minimumScaleFactor(0.4)
                     Text("A new trail each day. Same words for everyone. Resets at midnight UTC.").font(.subheadline).foregroundStyle(.secondary)
                     Button(store.progress.claimed.contains("\(daily.id)-solo") ? "Play today’s trail again" : "Walk today’s trail") { requestStart(daily:true) }.buttonStyle(TrailButton())
                 }
@@ -87,6 +98,8 @@ struct TrailHome: View {
         }
         .confirmationDialog("Start a new trail? Your current unfinished trail will be replaced.",isPresented:$replace,titleVisibility:.visible) { Button("Start new trail") { start(daily:pendingDaily) }; Button("Keep current trail",role:.cancel) {} }
     }
+    private var homeHeading: some View { VStack(alignment:.leading,spacing:6) { Text("WORD TRAILS").font(.caption.weight(.semibold)).tracking(3).dynamicTypeSize(...DynamicTypeSize.xxxLarge); Text("Find your way.").font(.system(.largeTitle,design:.serif)) } }
+    private var streak: some View { Label("\(store.progress.streak)",systemImage:"flame").font(.title3).accessibilityLabel("\(store.progress.streak) day streak") }
     private func requestStart(daily: Bool) { if let run = store.run, !run.isComplete { pendingDaily = daily; replace = true } else { start(daily:daily) } }
     private func start(daily: Bool) {
         let options = TrailCatalog.all.filter { $0.length == length }
