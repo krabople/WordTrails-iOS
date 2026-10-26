@@ -1,10 +1,19 @@
 # Word Trails
 
-Native iPhone word trails for iOS 17 and later. Daily solo play works offline, with optional real-friend co-op through Apple Game Center. No versus mode or bots. The website ways2earn.com is neither accessed nor changed.
+Native iPhone and iPad word trails for iOS/iPadOS 17 and later. Daily solo play works offline, with optional real-friend co-op through Apple Game Center. No versus mode or bots. The website ways2earn.com is neither accessed nor changed.
 
 Current internal TestFlight beta: **1.3.0 (2)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.3.0-2` (`cdbf32f35a24f4bc5f69cd99a8de88d268165e1b`). All 23 engine tests and five iPhone simulator UI tests passed.
 
 <img src="docs/screenshots/08-Statistics.png" width="260" alt="Statistics per difficulty"> <img src="docs/screenshots/06-Complete.png" width="260" alt="An optimal route finishing one under par">
+
+## Update 1.4
+
+- Universal iPhone/iPad target; iPad supports portrait, landscape and adaptive window widths.
+- Reading widths stay comfortable on larger screens. Wide play screens place the trail alongside the controls; narrow windows and accessibility sizes use a scrolling column.
+- Letter tiles retain a sensible size, and result cards and native sharing adapt to iPad.
+- The validation matrix uses full-size iPhone Pro Max and 13-inch iPad Pro simulators. It captures ten store scenes per device, a real gameplay recording and iPad rotation/share checks.
+- Store-only sample history is compiled exclusively in Debug and requires both `--ui-test` and `--store-capture`. Real catalogue routes go through normal move validation and reward logic, with isolated temporary saves. Release builds contain no sample-progress switch.
+- Store artwork is a code-drawn composition around unaltered simulator captures, with original captures retained.
 
 ## Update 1.3
 

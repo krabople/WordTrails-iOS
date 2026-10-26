@@ -76,7 +76,7 @@ struct OnlinePlayView:View {
                 if let error=social.error{Text(error).foregroundStyle(.secondary)}
                 Button("Refresh",systemImage:"arrow.clockwise"){Task{if let match=social.selected{await social.open(match);social.syncCompleted(into:store)}}}.disabled(social.busy)
             }
-        }.padding(20)}.navigationTitle("Shared trail").navigationBarTitleDisplayMode(.inline)
+        }.padding(20).trailReadableWidth()}.background(Palette.canvas).navigationTitle("Shared trail").navigationBarTitleDisplayMode(.inline)
         .task{if let run=social.myRun{store.progress.track(run);store.save()};social.syncCompleted(into:store)}
         .toolbar{if social.selected?.status == .open{Button("Leave",role:.destructive){leaving=true}.disabled(social.busy)}}
         .confirmationDialog("Leave this shared trail?",isPresented:$leaving,titleVisibility:.visible){

@@ -47,7 +47,7 @@ final class StoreMediaTests:XCTestCase {
         tap(app.buttons["Stats"])
         try capture("08-Statistics")
         // Move the first badge to the top, keeping the real list intact.
-        let firstBadge=app.cells.containing(NSPredicate(format:"label CONTAINS %@","First steps")).firstMatch
+        let firstBadge=app.cells.matching(NSPredicate(format:"label CONTAINS %@","First footsteps")).firstMatch
         for _ in 0..<8{if firstBadge.isHittable{break};app.swipeUp()}
         app.swipeUp()
         try capture("09-Badges")
@@ -65,6 +65,14 @@ final class StoreMediaTests:XCTestCase {
         XCTAssertFalse(app.staticTexts["gameMessage"].exists)
         XCUIDevice.shared.orientation = .portrait
         try capture("QA-iPad-Portrait")
+        launch(["--completed"])
+        tap(app.buttons["completedTrailHistory"])
+        tap(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","completedAttempt-")).firstMatch)
+        tap(app.buttons["shareSavedResult"])
+        tap(app.buttons["shareCard"])
+        let copy=app.descendants(matching:.any).matching(NSPredicate(format:"label == %@","Copy")).firstMatch
+        XCTAssertTrue(copy.waitForExistence(timeout:15),"The native iPad share sheet should open safely")
+        try capture("QA-iPad-System-Share")
     }
     func testRecordGameplay() throws {
         launch(["--record-game"]);tap(app.buttons["continueTrail"])
