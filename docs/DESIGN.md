@@ -1,4 +1,4 @@
-# Word Trails 1.2 design
+# Word Trails 1.3 design
 
 The primary experience is a daily solo trail, with four letter lengths and optional practice. No opponent or account is required. Optional Game Center co-op lets two real players alternate legal words on a shared route. Bots and versus have been removed.
 
@@ -21,3 +21,7 @@ Hints search the full graph with future nodes restricted to familiar words, allo
 Badges include 100, 250, 500 and 1,000 rewarded trails; 30, 100 and 365 daily-play days; 90- and 365-day streaks; distinct under-par and shortest-route totals; 25 trails per difficulty; a full garden; and co-op milestones. New awards are announced together. Replayed copies of the same puzzle/mode do not inflate distinct-route achievements. Historical longest streaks are retained through the existing daily-day history.
 
 Result sharing renders an original native vector card at 1200×1560. It shows the endpoints, score, steps, par, minimum and hint status, without intermediate-word spoilers. The system activity sheet shares the PNG and canonical App Store URL. That URL becomes live when the app is publicly released.
+
+Completed results are immutable Run values rendered independently from TrailStore.run. A saved view does not call start, submit, record or track. Daily cards select the latest matching solo completion, checking both puzzle ID and endpoints for compatibility with older catalogs; every older result remains available in the full searchable history. Stats also links directly to history, while recent rows open the same detail view.
+
+The shortest-route acknowledgement requires a completed route whose step count equals that attempt's stored minimum. It recognises minimum length even with hints or undo; the unassisted badges retain their separate requirements. The marker appears in live completion, saved detail, co-op completion and the rendered share card.

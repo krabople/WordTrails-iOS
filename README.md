@@ -2,9 +2,16 @@
 
 Native iPhone word trails for iOS 17 and later. Daily solo play works offline, with optional real-friend co-op through Apple Game Center. No versus mode or bots. The website ways2earn.com is neither accessed nor changed.
 
-Current internal TestFlight beta: **1.2.0 (1)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.2.0-1` (`b9d2f5bc1ddd97dc5eb307d22024b62860790b7c`). All 21 engine tests and four iPhone simulator UI tests passed.
+Current internal TestFlight beta: **1.3.0 (2)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.3.0-2` (`cdbf32f35a24f4bc5f69cd99a8de88d268165e1b`). All 23 engine tests and five iPhone simulator UI tests passed.
 
 <img src="docs/screenshots/08-Statistics.png" width="260" alt="Statistics per difficulty"> <img src="docs/screenshots/06-Complete.png" width="260" alt="An optimal route finishing one under par">
+
+## Update 1.3
+
+- Completed daily attempts open directly from the daily card; replay is a separate action.
+- Searchable completed-trail history is available from Trails and Stats, including older attempts and replays. Saved views retain original routes, scores, par and minimum and never replace the active run, create attempts or award seeds again.
+- Minimum-step solutions receive a Shortest possible route acknowledgement on completion, in saved results and on shared cards. Hints or undo do not prevent this route-length recognition; unassisted achievement rules are unchanged.
+- Removed the difficulty legend from the bottom of Trails, with a native screenshot and UI regression check.
 
 ## Update 1.2
 
@@ -19,7 +26,7 @@ Current internal TestFlight beta: **1.2.0 (1)**, Apple processing `VALID`, assig
 - Familiar hints now consider a familiar continuation even when the current word is unusual. Uncommon continuations are used only when no equally short familiar route remains. The explanation is in Field notes; the hint itself stays concise.
 - Sixteen new badges bring the total to 24, with 1,000-trail, 365-day and 365-day-streak milestones. New badges trigger an in-app notice. Historical progress is recognised; distinct-trail badges cannot be farmed with replays.
 - Sharing exports an illustrated 1200×1560 result card and a small canonical App Store link. Intermediate route words stay private. The App Store link becomes available at public launch.
-- Daily puzzles remain identical worldwide at each difficulty, resetting at midnight UTC. The 1.2 update preserves the 1.1 catalog exactly. Catalog-size copy and the difficulty legend were removed from the app.
+- Daily puzzles remain identical worldwide at each difficulty, resetting at midnight UTC. The 1.2 update preserves the 1.1 catalog exactly. Catalog-size copy was removed from Field notes.
 
 ## Play and privacy
 
