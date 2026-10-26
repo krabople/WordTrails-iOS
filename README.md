@@ -22,9 +22,9 @@ Original vector landscapes, SF Symbols, system typography, Dynamic Type, VoiceOv
 
 ## Content provenance and verification
 
-ESDB/SCOWL official release `rel-2026.02.25`, pinned mirror revision `71d7dd07676edb60ade43552e10b41314b7e9287`. Accepted list uses size 85; familiar routes use the smaller size-35 list. The latter is a practical familiarity proxy, not a guarantee that everyone knows each word. Only 3–6-letter A–Z forms are accepted. Prior accepted words remain available for save compatibility.
+ESDB/SCOWL official release `rel-2026.02.25`, pinned mirror revision `71d7dd07676edb60ade43552e10b41314b7e9287`. Accepted list uses size 85; familiar routes use the size-35 list screened with wordfreq 3.1.1 and editorial inclusions/exclusions. The latter is a practical familiarity proxy, not a guarantee that everyone knows each word. Only 3–6-letter A–Z forms are accepted. Prior accepted words remain available for save compatibility.
 
-Source, extraction settings and hashes are bundled in `dictionary-source.json`; complete notices in `Dictionary-Licence.txt`. Reproduce extraction with `scripts/import-dictionary.py` using the official pinned database/tools, then run `node scripts/generate-trails.mjs`. Catalog generation never silently relaxes the difficulty or familiar-route requirements.
+Source, extraction settings and hashes are bundled in `dictionary-source.json`; complete notices in `Dictionary-Licence.txt` and `Familiar-Licence.txt`. Reproduce extraction with `scripts/import-dictionary.py` using the official pinned database/tools, then run `python scripts/screen-familiar.py` (wordfreq 3.1.1 required) and `node scripts/generate-trails.mjs`. Catalog generation never silently relaxes the difficulty or familiar-route requirements.
 
 On a Mac with Xcode and XcodeGen:
 

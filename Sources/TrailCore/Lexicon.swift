@@ -36,7 +36,7 @@ public final class Lexicon: @unchecked Sendable {
         while head<queue.count {let current=queue[head];head+=1;let depth=dist[current]!;if depth>=maximum{continue};for next in neighbors(current) where dist[next]==nil {dist[next]=depth+1;queue.append(next)}}
         return dist
     }
-    public static var licence:String {(try? String(contentsOf:Bundle.module.url(forResource:"Dictionary-Licence",withExtension:"txt")!,encoding:.utf8)) ?? ""}
+    public static var licence:String {["Dictionary-Licence","Familiar-Licence"].compactMap{resource in Bundle.module.url(forResource:resource,withExtension:"txt").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
 }
 
 public struct Puzzle: Codable,Hashable,Identifiable,Sendable {

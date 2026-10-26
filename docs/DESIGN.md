@@ -4,7 +4,7 @@ The primary experience is a daily solo trail, with four letter lengths and optio
 
 Change exactly one letter, retain the length and use an accepted word. No repeated words; steps that would trap the player are rejected. Solo includes hints and undo. Co-op is turn based without either aid.
 
-The comprehensive ESDB dictionary contains 37,819 accepted 3–6-letter forms. All 40,000 catalog trails have a shortest route using the smaller familiar-word list, and the full dictionary has exactly the same shortest distance. Each difficulty has 10,000 unordered endpoint pairs. Minimum steps are at least 4, 5, 6 and 7 respectively. Par allows one extra step for 3–4 letters and two for 5–6 letters. This is a difficulty heuristic; later player evidence could inform recalibration.
+The comprehensive ESDB dictionary contains 37,819 accepted 3–6-letter forms. All 40,000 catalog trails have a shortest route using the frequency-screened familiar-word list, and the full dictionary has exactly the same shortest distance. Each difficulty has 10,000 unordered endpoint pairs. Minimum steps are at least 4, 5, 6 and 7 respectively. Par allows one extra step for 3–4 letters and two for 5–6 letters. This is a difficulty heuristic; later player evidence could inform recalibration.
 
 Statistics distinguish attempts from completions and use run IDs to avoid double counting resumed games. Per difficulty and overall they show completion rates, below/on/above-par counts, shortest routes, average steps and average/best score against par. Old completed trails are imported with their original par; earlier abandoned attempts were not saved and cannot be recovered.
 

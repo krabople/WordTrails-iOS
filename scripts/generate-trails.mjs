@@ -23,7 +23,7 @@ for(let length=3;length<=6;length++){
     for(const goal of candidates){const pair=[words[start],words[goal]].sort().join('-');if(used.has(pair))continue;
       const path=[];for(let n=goal;n>=0;n=known.parent[n])path.push(words[n]);path.reverse();
       puzzles.push({id:`v2-${words[start]}-${words[goal]}`,start:words[start],goal:words[goal],par:full.dist[goal]+(length>=5?2:1),minimumSteps:full.dist[goal],familiarPath:path});
-      used.add(pair);count++;if(++fromThisStart>=32||count>=target)break;
+      used.add(pair);count++;if(++fromThisStart>=128||count>=target)break;
     }
     sources++;if(count>=target)break;
   }

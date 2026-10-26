@@ -54,9 +54,12 @@ struct JournalView:View {
             }
             Section("By difficulty"){
                 ForEach(3...6,id:\.self){length in
-                    DisclosureGroup("\(names[length]!) · \(length) letters"){
+                    DisclosureGroup{
                         DifficultyStatsView(stats:store.progress.statistics(length:length))
-                    }.accessibilityIdentifier("difficultyStats\(length)")
+                    }label:{VStack(alignment:.leading,spacing:4){
+                        Text("\(names[length]!) · \(length) letters")
+                        Text("\(store.progress.statistics(length:length).completed) completed / \(store.progress.statistics(length:length).attempted) attempted").font(.caption).foregroundStyle(.secondary)
+                    }}.accessibilityIdentifier("difficultyStats\(length)")
                 }
             }
             Section("Overall results against par"){DifficultyStatsView(stats:store.progress.statistics())}

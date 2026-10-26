@@ -12,4 +12,4 @@ Apple requires creating the new app record on the App Store Connect website. Use
 
 Success requires a processed `VALID` build in Apple, not merely a successful upload. Add the build to the owner's internal TestFlight group after processing. External testers require separate beta review and an explicitly chosen tester group; no mass invitations are sent automatically.
 
-Test human co-op, versus, friend invitations, forfeits, turn notifications, interruption and restore on two real signed-in devices. Simulator UI checks and engine tests cannot establish Apple service behavior or device notification delivery.
+Test human co-op, friend invitations, forfeits, turn notifications, interruption and restore on two real signed-in devices. Simulator UI checks and engine tests cannot establish Apple service behavior or device notification delivery.

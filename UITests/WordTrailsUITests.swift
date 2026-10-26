@@ -20,7 +20,7 @@ final class WordTrailsUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Trail complete"].waitForExistence(timeout:5))
         XCTAssertTrue(app.staticTexts["+5 seeds for your garden"].exists)
         XCTAssertEqual(app.staticTexts["parResult"].label,"1 under par")
-        screenshot("06-Complete",app)
+        app.swipeUp(); screenshot("06-Complete",app)
     }
     func testRemindersAreOptInAndStatisticsAreAvailable() throws {
         let app=XCUIApplication();app.launchArguments=["--ui-test","--example-trail"];app.launch()

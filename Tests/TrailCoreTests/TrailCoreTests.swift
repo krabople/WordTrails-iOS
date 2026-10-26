@@ -20,6 +20,8 @@ final class TrailCoreTests: XCTestCase {
     func testExpandedDictionaryAndPreviouslyRejectedSnares() throws {
         for word in ["SNARES","SNORES","SPARES","COLOUR","COLOR","HONOUR","HONOR"] { XCTAssertTrue(Lexicon.shared.contains(word),word) }
         XCTAssertGreaterThan(Lexicon.shared.words.count,37000)
+        for word in ["CELLI","HASTED","BEDDER","ZAC"] {XCTAssertFalse(Lexicon.familiar.contains(word),word)}
+        for word in ["OAF","JUT","FIB"] {XCTAssertTrue(Lexicon.familiar.contains(word),word)}
         var run=Run(puzzle:Puzzle(id:"regression",start:"SNORES",goal:"SPARES",par:3,minimumSteps:2))
         try run.submit("SNARES");try run.submit("SPARES")
         XCTAssertEqual(run.scoreAgainstPar,-1)

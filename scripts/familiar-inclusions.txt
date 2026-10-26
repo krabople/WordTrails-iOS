@@ -1,0 +1,10 @@
+# Familiar words whose infrequency in running prose understates their recognition.
+AIL
+CAW
+EKE
+FIB
+FRO
+HEW
+IRK
+JUT
+OAF

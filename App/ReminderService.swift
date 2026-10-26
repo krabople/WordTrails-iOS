@@ -14,10 +14,10 @@ import TrailCore
     override init(){
         let defaults=UserDefaults.standard
         enabled=defaults.bool(forKey:"dailyReminderEnabled")
-        hour=defaults.object(forKey:"dailyReminderHour") as? Int ?? 19
-        minute=defaults.object(forKey:"dailyReminderMinute") as? Int ?? 0
-        if !(0...23).contains(hour){hour=19}
-        if !(0...59).contains(minute){minute=0}
+        let savedHour=defaults.object(forKey:"dailyReminderHour") as? Int ?? 19
+        let savedMinute=defaults.object(forKey:"dailyReminderMinute") as? Int ?? 0
+        hour=(0...23).contains(savedHour) ? savedHour:19
+        minute=(0...59).contains(savedMinute) ? savedMinute:0
         super.init()
         center.delegate=self
     }

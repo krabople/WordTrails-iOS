@@ -14,6 +14,18 @@
     "Australian"
   ],
   "wordCount": 37819,
-  "familiarCount": 11412,
-  "filter": "Lowercase ASCII lexical words, 3\u20136 letters; excludes abbreviation and nonword categories. Includes legacy accepted words for saved progress."
+  "familiarCount": 8779,
+  "filter": "Lowercase ASCII lexical words, 3\u20136 letters; excludes abbreviation and nonword categories. Includes legacy accepted words for saved progress.",
+  "familiarScreen": {
+    "package": "wordfreq 3.1.1",
+    "source": "https://github.com/rspeer/wordfreq",
+    "zipf": {
+      "threeLetter": 2.7,
+      "other": 3.0,
+      "regularInflectionBase": 3.3
+    },
+    "exclusions": "scripts/familiar-exclusions.txt",
+    "inclusions": "scripts/familiar-inclusions.txt",
+    "licence": "Derived familiar list and catalog CC BY-SA 4.0; see Familiar-Licence.txt"
+  }
 }
