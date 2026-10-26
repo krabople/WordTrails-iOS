@@ -83,7 +83,7 @@ struct SettingsView: View {
                 Text("Moves that would leave no route to the destination are rejected, so you cannot become trapped. Online players can forfeit in Game Center’s match picker. There are no ranked prizes or cash rewards.")
             }
             Section("Dictionary") {
-                Text("\(Lexicon.shared.words.count.formatted()) hand-selected English words, 3–6 letters. The same version is used by everyone, including the bots. The dictionary is deliberately bounded: not every English word is accepted. Both players need a compatible app version.")
+                Text("\(Lexicon.shared.words.count.formatted()) curated English words, 3–6 letters. The same version is used by everyone, including the bots. The dictionary is deliberately bounded: not every English word is accepted. Both players need a compatible app version.")
                 NavigationLink("Browse accepted words") { DictionaryView() }
             }
             Section("Daily trails and rewards") {
@@ -94,7 +94,7 @@ struct SettingsView: View {
             Section("Friends and privacy") {
                 Text("Solo and bots need no account or internet connection. Human play uses Apple Game Center for identity, friends, matchmaking, match storage and turn alerts. You explicitly choose when to sign in or request friend access. Word Trails has no advertising, analytics SDK, chat, contact upload or independent account database.")
                 Text("Bot guides are clearly labelled. They have no Apple accounts, never impersonate users, and don’t appear in human matchmaking. Game Center friends and blocking are managed in Apple’s Game Center settings.")
-                Text("Your website and hosting are not used by this app. Game Center activity is subject to Apple’s privacy policy.")
+                Text("Game Center activity is subject to Apple’s privacy policy.")
                 Link("Apple Game Center and privacy",destination:URL(string:"https://www.apple.com/legal/privacy/data/en/game-center/")!)
             }
             Section("Accessibility") { Text("Word Trails follows your system text size and appearance. Letter changes use both position and shading. VoiceOver reads words letter by letter. All scenes are static, with no motion needed to play. Larger text may require scrolling.") }
