@@ -2,6 +2,7 @@ name: Validate Word Trails
 on:
   push:
     branches: [main]
+    paths: ['App/**', 'Sources/**', 'Tests/**', 'UITests/**', 'Support/**', 'Package.swift', 'project.yml', '.github/workflows/validate.yml']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -41,7 +42,7 @@ jobs:
         run: |
           mkdir -p .build/screenshots
           xcrun xcresulttool export attachments --path .build/WordTrails.xcresult --output-path .build/screenshots || true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: WordTrails-validation

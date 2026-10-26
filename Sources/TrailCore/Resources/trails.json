@@ -1,0 +1,1454 @@
+[
+  {
+    "id": "ACE-AID",
+    "start": "ACE",
+    "goal": "AID",
+    "par": 4
+  },
+  {
+    "id": "ACE-BED",
+    "start": "ACE",
+    "goal": "BED",
+    "par": 4
+  },
+  {
+    "id": "AGE-ASH",
+    "start": "AGE",
+    "goal": "ASH",
+    "par": 4
+  },
+  {
+    "id": "AGE-BID",
+    "start": "AGE",
+    "goal": "BID",
+    "par": 5
+  },
+  {
+    "id": "AIDE-BANS",
+    "start": "AIDE",
+    "goal": "BANS",
+    "par": 4
+  },
+  {
+    "id": "AIR-APE",
+    "start": "AIR",
+    "goal": "APE",
+    "par": 4
+  },
+  {
+    "id": "AIR-AXE",
+    "start": "AIR",
+    "goal": "AXE",
+    "par": 4
+  },
+  {
+    "id": "AIR-BOB",
+    "start": "AIR",
+    "goal": "BOB",
+    "par": 4
+  },
+  {
+    "id": "ANT-BAR",
+    "start": "ANT",
+    "goal": "BAR",
+    "par": 5
+  },
+  {
+    "id": "ANT-BOX",
+    "start": "ANT",
+    "goal": "BOX",
+    "par": 6
+  },
+  {
+    "id": "ARE-BEG",
+    "start": "ARE",
+    "goal": "BEG",
+    "par": 4
+  },
+  {
+    "id": "ARE-BUM",
+    "start": "ARE",
+    "goal": "BUM",
+    "par": 5
+  },
+  {
+    "id": "ASK-BAG",
+    "start": "ASK",
+    "goal": "BAG",
+    "par": 7
+  },
+  {
+    "id": "ASK-BIN",
+    "start": "ASK",
+    "goal": "BIN",
+    "par": 6
+  },
+  {
+    "id": "ASK-BYE",
+    "start": "ASK",
+    "goal": "BYE",
+    "par": 4
+  },
+  {
+    "id": "AWAY-BAIT",
+    "start": "AWAY",
+    "goal": "BAIT",
+    "par": 8
+  },
+  {
+    "id": "AWAY-BARK",
+    "start": "AWAY",
+    "goal": "BARK",
+    "par": 8
+  },
+  {
+    "id": "AWAY-BEDS",
+    "start": "AWAY",
+    "goal": "BEDS",
+    "par": 7
+  },
+  {
+    "id": "AYE-BED",
+    "start": "AYE",
+    "goal": "BED",
+    "par": 3
+  },
+  {
+    "id": "AYE-BOO",
+    "start": "AYE",
+    "goal": "BOO",
+    "par": 5
+  },
+  {
+    "id": "AYE-CAP",
+    "start": "AYE",
+    "goal": "CAP",
+    "par": 5
+  },
+  {
+    "id": "BADE-BEET",
+    "start": "BADE",
+    "goal": "BEET",
+    "par": 5
+  },
+  {
+    "id": "BALE-BEAD",
+    "start": "BALE",
+    "goal": "BEAD",
+    "par": 4
+  },
+  {
+    "id": "BALE-BEST",
+    "start": "BALE",
+    "goal": "BEST",
+    "par": 4
+  },
+  {
+    "id": "BALED-BEAMS",
+    "start": "BALED",
+    "goal": "BEAMS",
+    "par": 8
+  },
+  {
+    "id": "BANG-BEAT",
+    "start": "BANG",
+    "goal": "BEAT",
+    "par": 4
+  },
+  {
+    "id": "BANG-BIKE",
+    "start": "BANG",
+    "goal": "BIKE",
+    "par": 3
+  },
+  {
+    "id": "BANGS-BASIL",
+    "start": "BANGS",
+    "goal": "BASIL",
+    "par": 8
+  },
+  {
+    "id": "BARN-BEEN",
+    "start": "BARN",
+    "goal": "BEEN",
+    "par": 4
+  },
+  {
+    "id": "BARN-BINS",
+    "start": "BARN",
+    "goal": "BINS",
+    "par": 3
+  },
+  {
+    "id": "BASS-BEAN",
+    "start": "BASS",
+    "goal": "BEAN",
+    "par": 5
+  },
+  {
+    "id": "BASS-BELT",
+    "start": "BASS",
+    "goal": "BELT",
+    "par": 5
+  },
+  {
+    "id": "BASS-BLOT",
+    "start": "BASS",
+    "goal": "BLOT",
+    "par": 6
+  },
+  {
+    "id": "BAT-BRA",
+    "start": "BAT",
+    "goal": "BRA",
+    "par": 4
+  },
+  {
+    "id": "BAT-COD",
+    "start": "BAT",
+    "goal": "COD",
+    "par": 3
+  },
+  {
+    "id": "BATHED-BETTER",
+    "start": "BATHED",
+    "goal": "BETTER",
+    "par": 9
+  },
+  {
+    "id": "BEAK-BEDS",
+    "start": "BEAK",
+    "goal": "BEDS",
+    "par": 4
+  },
+  {
+    "id": "BEAK-BIAS",
+    "start": "BEAK",
+    "goal": "BIAS",
+    "par": 4
+  },
+  {
+    "id": "BEANS-BONES",
+    "start": "BEANS",
+    "goal": "BONES",
+    "par": 7
+  },
+  {
+    "id": "BEAU-BILL",
+    "start": "BEAU",
+    "goal": "BILL",
+    "par": 4
+  },
+  {
+    "id": "BEAU-BOLD",
+    "start": "BEAU",
+    "goal": "BOLD",
+    "par": 4
+  },
+  {
+    "id": "BED-CUP",
+    "start": "BED",
+    "goal": "CUP",
+    "par": 3
+  },
+  {
+    "id": "BEEP-BITE",
+    "start": "BEEP",
+    "goal": "BITE",
+    "par": 4
+  },
+  {
+    "id": "BEEP-BONE",
+    "start": "BEEP",
+    "goal": "BONE",
+    "par": 5
+  },
+  {
+    "id": "BENCH-BLAND",
+    "start": "BENCH",
+    "goal": "BLAND",
+    "par": 8
+  },
+  {
+    "id": "BENCH-BLOCK",
+    "start": "BENCH",
+    "goal": "BLOCK",
+    "par": 9
+  },
+  {
+    "id": "BEND-BIKE",
+    "start": "BEND",
+    "goal": "BIKE",
+    "par": 3
+  },
+  {
+    "id": "BEND-BLUE",
+    "start": "BEND",
+    "goal": "BLUE",
+    "par": 6
+  },
+  {
+    "id": "BEND-BOOR",
+    "start": "BEND",
+    "goal": "BOOR",
+    "par": 4
+  },
+  {
+    "id": "BET-BOB",
+    "start": "BET",
+    "goal": "BOB",
+    "par": 3
+  },
+  {
+    "id": "BET-COT",
+    "start": "BET",
+    "goal": "COT",
+    "par": 3
+  },
+  {
+    "id": "BIDE-BOTH",
+    "start": "BIDE",
+    "goal": "BOTH",
+    "par": 5
+  },
+  {
+    "id": "BIG-HOT",
+    "start": "BIG",
+    "goal": "HOT",
+    "par": 3
+  },
+  {
+    "id": "BIND-BLOT",
+    "start": "BIND",
+    "goal": "BLOT",
+    "par": 5
+  },
+  {
+    "id": "BIND-BOLT",
+    "start": "BIND",
+    "goal": "BOLT",
+    "par": 3
+  },
+  {
+    "id": "BIND-BRAG",
+    "start": "BIND",
+    "goal": "BRAG",
+    "par": 4
+  },
+  {
+    "id": "BIT-BOX",
+    "start": "BIT",
+    "goal": "BOX",
+    "par": 3
+  },
+  {
+    "id": "BIT-CAD",
+    "start": "BIT",
+    "goal": "CAD",
+    "par": 3
+  },
+  {
+    "id": "BIT-CUD",
+    "start": "BIT",
+    "goal": "CUD",
+    "par": 3
+  },
+  {
+    "id": "BITS-BOAT",
+    "start": "BITS",
+    "goal": "BOAT",
+    "par": 4
+  },
+  {
+    "id": "BITS-BOOK",
+    "start": "BITS",
+    "goal": "BOOK",
+    "par": 6
+  },
+  {
+    "id": "BITS-BRED",
+    "start": "BITS",
+    "goal": "BRED",
+    "par": 8
+  },
+  {
+    "id": "BLACK-WHITE",
+    "start": "BLACK",
+    "goal": "WHITE",
+    "par": 8
+  },
+  {
+    "id": "BLOND-BLUSH",
+    "start": "BLOND",
+    "goal": "BLUSH",
+    "par": 7
+  },
+  {
+    "id": "BLUR-BOLD",
+    "start": "BLUR",
+    "goal": "BOLD",
+    "par": 7
+  },
+  {
+    "id": "BLUR-BORE",
+    "start": "BLUR",
+    "goal": "BORE",
+    "par": 7
+  },
+  {
+    "id": "BLUR-BUGS",
+    "start": "BLUR",
+    "goal": "BUGS",
+    "par": 9
+  },
+  {
+    "id": "BOGS-BONE",
+    "start": "BOGS",
+    "goal": "BONE",
+    "par": 5
+  },
+  {
+    "id": "BOMB-BOOR",
+    "start": "BOMB",
+    "goal": "BOOR",
+    "par": 7
+  },
+  {
+    "id": "BOMB-BRAS",
+    "start": "BOMB",
+    "goal": "BRAS",
+    "par": 8
+  },
+  {
+    "id": "BOMB-BUSH",
+    "start": "BOMB",
+    "goal": "BUSH",
+    "par": 7
+  },
+  {
+    "id": "BOOM-BOTH",
+    "start": "BOOM",
+    "goal": "BOTH",
+    "par": 7
+  },
+  {
+    "id": "BOOM-BRIM",
+    "start": "BOOM",
+    "goal": "BRIM",
+    "par": 7
+  },
+  {
+    "id": "BOP-BUM",
+    "start": "BOP",
+    "goal": "BUM",
+    "par": 3
+  },
+  {
+    "id": "BOP-CAT",
+    "start": "BOP",
+    "goal": "CAT",
+    "par": 3
+  },
+  {
+    "id": "BOP-DAB",
+    "start": "BOP",
+    "goal": "DAB",
+    "par": 4
+  },
+  {
+    "id": "BORN-BRAG",
+    "start": "BORN",
+    "goal": "BRAG",
+    "par": 5
+  },
+  {
+    "id": "BORN-BULK",
+    "start": "BORN",
+    "goal": "BULK",
+    "par": 6
+  },
+  {
+    "id": "BORN-CALF",
+    "start": "BORN",
+    "goal": "CALF",
+    "par": 6
+  },
+  {
+    "id": "BOWS-BURP",
+    "start": "BOWS",
+    "goal": "BURP",
+    "par": 6
+  },
+  {
+    "id": "BOWS-CANE",
+    "start": "BOWS",
+    "goal": "CANE",
+    "par": 4
+  },
+  {
+    "id": "BRAIN-SPEAK",
+    "start": "BRAIN",
+    "goal": "SPEAK",
+    "par": 14
+  },
+  {
+    "id": "BRAT-BUGS",
+    "start": "BRAT",
+    "goal": "BUGS",
+    "par": 5
+  },
+  {
+    "id": "BRAT-BUSY",
+    "start": "BRAT",
+    "goal": "BUSY",
+    "par": 4
+  },
+  {
+    "id": "BRAT-CARD",
+    "start": "BRAT",
+    "goal": "CARD",
+    "par": 6
+  },
+  {
+    "id": "BREAD-BRINK",
+    "start": "BREAD",
+    "goal": "BRINK",
+    "par": 6
+  },
+  {
+    "id": "BROW-BUNS",
+    "start": "BROW",
+    "goal": "BUNS",
+    "par": 9
+  },
+  {
+    "id": "BROW-CAFE",
+    "start": "BROW",
+    "goal": "CAFE",
+    "par": 8
+  },
+  {
+    "id": "BROW-CASE",
+    "start": "BROW",
+    "goal": "CASE",
+    "par": 8
+  },
+  {
+    "id": "BUD-BYE",
+    "start": "BUD",
+    "goal": "BYE",
+    "par": 3
+  },
+  {
+    "id": "BUD-CON",
+    "start": "BUD",
+    "goal": "CON",
+    "par": 3
+  },
+  {
+    "id": "BUD-DEW",
+    "start": "BUD",
+    "goal": "DEW",
+    "par": 4
+  },
+  {
+    "id": "BULL-BUSH",
+    "start": "BULL",
+    "goal": "BUSH",
+    "par": 5
+  },
+  {
+    "id": "BULL-CALM",
+    "start": "BULL",
+    "goal": "CALM",
+    "par": 3
+  },
+  {
+    "id": "BULL-CAVE",
+    "start": "BULL",
+    "goal": "CAVE",
+    "par": 5
+  },
+  {
+    "id": "BUT-CAP",
+    "start": "BUT",
+    "goal": "CAP",
+    "par": 3
+  },
+  {
+    "id": "BUT-COY",
+    "start": "BUT",
+    "goal": "COY",
+    "par": 3
+  },
+  {
+    "id": "BUT-DIN",
+    "start": "BUT",
+    "goal": "DIN",
+    "par": 3
+  },
+  {
+    "id": "CAGES-CELLS",
+    "start": "CAGES",
+    "goal": "CELLS",
+    "par": 7
+  },
+  {
+    "id": "CAM-DOT",
+    "start": "CAM",
+    "goal": "DOT",
+    "par": 3
+  },
+  {
+    "id": "CAT-DOG",
+    "start": "CAT",
+    "goal": "DOG",
+    "par": 3
+  },
+  {
+    "id": "CAW-DUG",
+    "start": "CAW",
+    "goal": "DUG",
+    "par": 4
+  },
+  {
+    "id": "CLOSE-COAST",
+    "start": "CLOSE",
+    "goal": "COAST",
+    "par": 8
+  },
+  {
+    "id": "CLOSE-CRATE",
+    "start": "CLOSE",
+    "goal": "CRATE",
+    "par": 6
+  },
+  {
+    "id": "COLD-WARM",
+    "start": "COLD",
+    "goal": "WARM",
+    "par": 4
+  },
+  {
+    "id": "COO-DIE",
+    "start": "COO",
+    "goal": "DIE",
+    "par": 4
+  },
+  {
+    "id": "COO-EAT",
+    "start": "COO",
+    "goal": "EAT",
+    "par": 3
+  },
+  {
+    "id": "CRANK-CREEK",
+    "start": "CRANK",
+    "goal": "CREEK",
+    "par": 8
+  },
+  {
+    "id": "CRANK-CRUST",
+    "start": "CRANK",
+    "goal": "CRUST",
+    "par": 8
+  },
+  {
+    "id": "CRY-DAB",
+    "start": "CRY",
+    "goal": "DAB",
+    "par": 3
+  },
+  {
+    "id": "CRY-DOE",
+    "start": "CRY",
+    "goal": "DOE",
+    "par": 4
+  },
+  {
+    "id": "CUR-DEW",
+    "start": "CUR",
+    "goal": "DEW",
+    "par": 5
+  },
+  {
+    "id": "CUR-ERR",
+    "start": "CUR",
+    "goal": "ERR",
+    "par": 3
+  },
+  {
+    "id": "DARK-LIME",
+    "start": "DARK",
+    "goal": "LIME",
+    "par": 4
+  },
+  {
+    "id": "DAY-DIN",
+    "start": "DAY",
+    "goal": "DIN",
+    "par": 3
+  },
+  {
+    "id": "DAY-DUO",
+    "start": "DAY",
+    "goal": "DUO",
+    "par": 3
+  },
+  {
+    "id": "DAY-FAN",
+    "start": "DAY",
+    "goal": "FAN",
+    "par": 3
+  },
+  {
+    "id": "DIG-EEL",
+    "start": "DIG",
+    "goal": "EEL",
+    "par": 5
+  },
+  {
+    "id": "DIG-FEE",
+    "start": "DIG",
+    "goal": "FEE",
+    "par": 4
+  },
+  {
+    "id": "DUD-EAT",
+    "start": "DUD",
+    "goal": "EAT",
+    "par": 4
+  },
+  {
+    "id": "DUD-EWE",
+    "start": "DUD",
+    "goal": "EWE",
+    "par": 4
+  },
+  {
+    "id": "DUD-FLU",
+    "start": "DUD",
+    "goal": "FLU",
+    "par": 6
+  },
+  {
+    "id": "DYE-FAT",
+    "start": "DYE",
+    "goal": "FAT",
+    "par": 5
+  },
+  {
+    "id": "DYE-FOR",
+    "start": "DYE",
+    "goal": "FOR",
+    "par": 3
+  },
+  {
+    "id": "EGG-FEW",
+    "start": "EGG",
+    "goal": "FEW",
+    "par": 8
+  },
+  {
+    "id": "EGG-GAB",
+    "start": "EGG",
+    "goal": "GAB",
+    "par": 9
+  },
+  {
+    "id": "FADES-FEVER",
+    "start": "FADES",
+    "goal": "FEVER",
+    "par": 7
+  },
+  {
+    "id": "FEELS-FINES",
+    "start": "FEELS",
+    "goal": "FINES",
+    "par": 8
+  },
+  {
+    "id": "FEWER-FILED",
+    "start": "FEWER",
+    "goal": "FILED",
+    "par": 7
+  },
+  {
+    "id": "FEWER-FIXES",
+    "start": "FEWER",
+    "goal": "FIXES",
+    "par": 7
+  },
+  {
+    "id": "FIRE-SNOW",
+    "start": "FIRE",
+    "goal": "SNOW",
+    "par": 7
+  },
+  {
+    "id": "FISH-BIRD",
+    "start": "FISH",
+    "goal": "BIRD",
+    "par": 6
+  },
+  {
+    "id": "FLOOD-GIANT",
+    "start": "FLOOD",
+    "goal": "GIANT",
+    "par": 7
+  },
+  {
+    "id": "FOOT-HAND",
+    "start": "FOOT",
+    "goal": "HAND",
+    "par": 5
+  },
+  {
+    "id": "FRANK-GRAFT",
+    "start": "FRANK",
+    "goal": "GRAFT",
+    "par": 7
+  },
+  {
+    "id": "GLAZES-GRATED",
+    "start": "GLAZES",
+    "goal": "GRATED",
+    "par": 3
+  },
+  {
+    "id": "GRASS-GRAIN",
+    "start": "GRASS",
+    "goal": "GRAIN",
+    "par": 13
+  },
+  {
+    "id": "GREED-GROOM",
+    "start": "GREED",
+    "goal": "GROOM",
+    "par": 8
+  },
+  {
+    "id": "HANDED-HEATED",
+    "start": "HANDED",
+    "goal": "HEATED",
+    "par": 7
+  },
+  {
+    "id": "HARDER-HEADED",
+    "start": "HARDER",
+    "goal": "HEADED",
+    "par": 6
+  },
+  {
+    "id": "HARMS-HATES",
+    "start": "HARMS",
+    "goal": "HATES",
+    "par": 6
+  },
+  {
+    "id": "HARMS-HEELS",
+    "start": "HARMS",
+    "goal": "HEELS",
+    "par": 9
+  },
+  {
+    "id": "HARPER-HEALER",
+    "start": "HARPER",
+    "goal": "HEALER",
+    "par": 7
+  },
+  {
+    "id": "HAT-PIG",
+    "start": "HAT",
+    "goal": "PIG",
+    "par": 3
+  },
+  {
+    "id": "HEAD-TAIL",
+    "start": "HEAD",
+    "goal": "TAIL",
+    "par": 5
+  },
+  {
+    "id": "HEADS-HIRES",
+    "start": "HEADS",
+    "goal": "HIRES",
+    "par": 8
+  },
+  {
+    "id": "HIVES-HOVER",
+    "start": "HIVES",
+    "goal": "HOVER",
+    "par": 4
+  },
+  {
+    "id": "KILLS-LAKES",
+    "start": "KILLS",
+    "goal": "LAKES",
+    "par": 5
+  },
+  {
+    "id": "LACKS-LANDS",
+    "start": "LACKS",
+    "goal": "LANDS",
+    "par": 3
+  },
+  {
+    "id": "LACKS-LINED",
+    "start": "LACKS",
+    "goal": "LINED",
+    "par": 4
+  },
+  {
+    "id": "LANDER-LOADED",
+    "start": "LANDER",
+    "goal": "LOADED",
+    "par": 4
+  },
+  {
+    "id": "LARDER-LEADER",
+    "start": "LARDER",
+    "goal": "LEADER",
+    "par": 3
+  },
+  {
+    "id": "LARDER-LOADER",
+    "start": "LARDER",
+    "goal": "LOADER",
+    "par": 4
+  },
+  {
+    "id": "LASER-LEVEL",
+    "start": "LASER",
+    "goal": "LEVEL",
+    "par": 4
+  },
+  {
+    "id": "LASER-LOADS",
+    "start": "LASER",
+    "goal": "LOADS",
+    "par": 9
+  },
+  {
+    "id": "LASTED-LETTER",
+    "start": "LASTED",
+    "goal": "LETTER",
+    "par": 6
+  },
+  {
+    "id": "LEASED-LENDER",
+    "start": "LEASED",
+    "goal": "LENDER",
+    "par": 5
+  },
+  {
+    "id": "LENDER-LOADED",
+    "start": "LENDER",
+    "goal": "LOADED",
+    "par": 3
+  },
+  {
+    "id": "LEVER-LINED",
+    "start": "LEVER",
+    "goal": "LINED",
+    "par": 3
+  },
+  {
+    "id": "LINES-LOADS",
+    "start": "LINES",
+    "goal": "LOADS",
+    "par": 5
+  },
+  {
+    "id": "LINES-LOSES",
+    "start": "LINES",
+    "goal": "LOSES",
+    "par": 3
+  },
+  {
+    "id": "LINES-MAKES",
+    "start": "LINES",
+    "goal": "MAKES",
+    "par": 3
+  },
+  {
+    "id": "LIVER-MANOR",
+    "start": "LIVER",
+    "goal": "MANOR",
+    "par": 4
+  },
+  {
+    "id": "LOG-FIN",
+    "start": "LOG",
+    "goal": "FIN",
+    "par": 3
+  },
+  {
+    "id": "LOOKS-LOVER",
+    "start": "LOOKS",
+    "goal": "LOVER",
+    "par": 8
+  },
+  {
+    "id": "LOVE-HATE",
+    "start": "LOVE",
+    "goal": "HATE",
+    "par": 3
+  },
+  {
+    "id": "MAJOR-MINDS",
+    "start": "MAJOR",
+    "goal": "MINDS",
+    "par": 5
+  },
+  {
+    "id": "MARKS-MIXES",
+    "start": "MARKS",
+    "goal": "MIXES",
+    "par": 7
+  },
+  {
+    "id": "MATES-MOLDS",
+    "start": "MATES",
+    "goal": "MOLDS",
+    "par": 7
+  },
+  {
+    "id": "MEANT-MINER",
+    "start": "MEANT",
+    "goal": "MINER",
+    "par": 9
+  },
+  {
+    "id": "MILLS-MINTS",
+    "start": "MILLS",
+    "goal": "MINTS",
+    "par": 3
+  },
+  {
+    "id": "MIXED-MOLDS",
+    "start": "MIXED",
+    "goal": "MOLDS",
+    "par": 7
+  },
+  {
+    "id": "MOON-STAR",
+    "start": "MOON",
+    "goal": "STAR",
+    "par": 5
+  },
+  {
+    "id": "NEVER-PACES",
+    "start": "NEVER",
+    "goal": "PACES",
+    "par": 7
+  },
+  {
+    "id": "PEARS-PESTS",
+    "start": "PEARS",
+    "goal": "PESTS",
+    "par": 7
+  },
+  {
+    "id": "PEARS-PINTS",
+    "start": "PEARS",
+    "goal": "PINTS",
+    "par": 9
+  },
+  {
+    "id": "PEN-BAG",
+    "start": "PEN",
+    "goal": "BAG",
+    "par": 3
+  },
+  {
+    "id": "PILES-POWER",
+    "start": "PILES",
+    "goal": "POWER",
+    "par": 6
+  },
+  {
+    "id": "PLACED-PLANTS",
+    "start": "PLACED",
+    "goal": "PLANTS",
+    "par": 3
+  },
+  {
+    "id": "PLANET-PLATES",
+    "start": "PLANET",
+    "goal": "PLATES",
+    "par": 2
+  },
+  {
+    "id": "PLATE-POUCH",
+    "start": "PLATE",
+    "goal": "POUCH",
+    "par": 6
+  },
+  {
+    "id": "PLATE-PROVE",
+    "start": "PLATE",
+    "goal": "PROVE",
+    "par": 8
+  },
+  {
+    "id": "PROSE-QUITE",
+    "start": "PROSE",
+    "goal": "QUITE",
+    "par": 8
+  },
+  {
+    "id": "RATED-READS",
+    "start": "RATED",
+    "goal": "READS",
+    "par": 8
+  },
+  {
+    "id": "RATED-RINGS",
+    "start": "RATED",
+    "goal": "RINGS",
+    "par": 8
+  },
+  {
+    "id": "RED-TOP",
+    "start": "RED",
+    "goal": "TOP",
+    "par": 4
+  },
+  {
+    "id": "ROAMED-SCARES",
+    "start": "ROAMED",
+    "goal": "SCARES",
+    "par": 4
+  },
+  {
+    "id": "ROARED-SCARFS",
+    "start": "ROARED",
+    "goal": "SCARFS",
+    "par": 4
+  },
+  {
+    "id": "SCALP-SCOPE",
+    "start": "SCALP",
+    "goal": "SCOPE",
+    "par": 4
+  },
+  {
+    "id": "SCARED-SCOPES",
+    "start": "SCARED",
+    "goal": "SCOPES",
+    "par": 3
+  },
+  {
+    "id": "SCARES-SEALER",
+    "start": "SCARES",
+    "goal": "SEALER",
+    "par": 4
+  },
+  {
+    "id": "SCARFS-SCORER",
+    "start": "SCARFS",
+    "goal": "SCORER",
+    "par": 3
+  },
+  {
+    "id": "SCOPED-SCOUTS",
+    "start": "SCOPED",
+    "goal": "SCOUTS",
+    "par": 6
+  },
+  {
+    "id": "SCOPES-SHAKEN",
+    "start": "SCOPES",
+    "goal": "SHAKEN",
+    "par": 5
+  },
+  {
+    "id": "SCORED-SHAKER",
+    "start": "SCORED",
+    "goal": "SHAKER",
+    "par": 5
+  },
+  {
+    "id": "SCORER-SHAKES",
+    "start": "SCORER",
+    "goal": "SHAKES",
+    "par": 4
+  },
+  {
+    "id": "SCORES-SHAPED",
+    "start": "SCORES",
+    "goal": "SHAPED",
+    "par": 4
+  },
+  {
+    "id": "SCORNS-SHAPES",
+    "start": "SCORNS",
+    "goal": "SHAPES",
+    "par": 4
+  },
+  {
+    "id": "SCOUT-SHAME",
+    "start": "SCOUT",
+    "goal": "SHAME",
+    "par": 5
+  },
+  {
+    "id": "SCOUTS-SEALER",
+    "start": "SCOUTS",
+    "goal": "SEALER",
+    "par": 9
+  },
+  {
+    "id": "SCOUTS-SHARES",
+    "start": "SCOUTS",
+    "goal": "SHARES",
+    "par": 4
+  },
+  {
+    "id": "SEATED-SHADES",
+    "start": "SEATED",
+    "goal": "SHADES",
+    "par": 5
+  },
+  {
+    "id": "SEATED-SHINES",
+    "start": "SEATED",
+    "goal": "SHINES",
+    "par": 8
+  },
+  {
+    "id": "SELLER-SHARKS",
+    "start": "SELLER",
+    "goal": "SHARKS",
+    "par": 7
+  },
+  {
+    "id": "SHADES-SHIRTS",
+    "start": "SHADES",
+    "goal": "SHIRTS",
+    "par": 4
+  },
+  {
+    "id": "SHADY-SHARK",
+    "start": "SHADY",
+    "goal": "SHARK",
+    "par": 3
+  },
+  {
+    "id": "SHADY-SHIFT",
+    "start": "SHADY",
+    "goal": "SHIFT",
+    "par": 6
+  },
+  {
+    "id": "SHAKEN-SHARKS",
+    "start": "SHAKEN",
+    "goal": "SHARKS",
+    "par": 3
+  },
+  {
+    "id": "SHAKEN-SHOOTS",
+    "start": "SHAKEN",
+    "goal": "SHOOTS",
+    "par": 5
+  },
+  {
+    "id": "SHAKER-SHAVED",
+    "start": "SHAKER",
+    "goal": "SHAVED",
+    "par": 3
+  },
+  {
+    "id": "SHAKER-SHORES",
+    "start": "SHAKER",
+    "goal": "SHORES",
+    "par": 3
+  },
+  {
+    "id": "SHAKES-SHORTS",
+    "start": "SHAKES",
+    "goal": "SHORTS",
+    "par": 3
+  },
+  {
+    "id": "SHAPE-SHOCK",
+    "start": "SHAPE",
+    "goal": "SHOCK",
+    "par": 6
+  },
+  {
+    "id": "SHAPES-SHOUTS",
+    "start": "SHAPES",
+    "goal": "SHOUTS",
+    "par": 4
+  },
+  {
+    "id": "SHAPES-SKIRTS",
+    "start": "SHAPES",
+    "goal": "SKIRTS",
+    "par": 5
+  },
+  {
+    "id": "SHARES-SLATED",
+    "start": "SHARES",
+    "goal": "SLATED",
+    "par": 4
+  },
+  {
+    "id": "SHARKS-SLATES",
+    "start": "SHARKS",
+    "goal": "SLATES",
+    "par": 4
+  },
+  {
+    "id": "SHAVED-SHIFTS",
+    "start": "SHAVED",
+    "goal": "SHIFTS",
+    "par": 6
+  },
+  {
+    "id": "SHAVES-SHINES",
+    "start": "SHAVES",
+    "goal": "SHINES",
+    "par": 6
+  },
+  {
+    "id": "SHAWL-SHELF",
+    "start": "SHAWL",
+    "goal": "SHELF",
+    "par": 3
+  },
+  {
+    "id": "SHINES-SHOUTS",
+    "start": "SHINES",
+    "goal": "SHOUTS",
+    "par": 8
+  },
+  {
+    "id": "SHORE-PLATE",
+    "start": "SHORE",
+    "goal": "PLATE",
+    "par": 5
+  },
+  {
+    "id": "SHORTS-SMOKES",
+    "start": "SHORTS",
+    "goal": "SMOKES",
+    "par": 4
+  },
+  {
+    "id": "SKIRTS-SLICES",
+    "start": "SKIRTS",
+    "goal": "SLICES",
+    "par": 8
+  },
+  {
+    "id": "SKIRTS-SPACER",
+    "start": "SKIRTS",
+    "goal": "SPACER",
+    "par": 7
+  },
+  {
+    "id": "SLATED-SLIDES",
+    "start": "SLATED",
+    "goal": "SLIDES",
+    "par": 8
+  },
+  {
+    "id": "SLATED-SNORES",
+    "start": "SLATED",
+    "goal": "SNORES",
+    "par": 5
+  },
+  {
+    "id": "SLATED-SPARED",
+    "start": "SLATED",
+    "goal": "SPARED",
+    "par": 3
+  },
+  {
+    "id": "SLATES-SOARED",
+    "start": "SLATES",
+    "goal": "SOARED",
+    "par": 4
+  },
+  {
+    "id": "SLATES-SPARES",
+    "start": "SLATES",
+    "goal": "SPARES",
+    "par": 3
+  },
+  {
+    "id": "SMOKES-SPACED",
+    "start": "SMOKES",
+    "goal": "SPACED",
+    "par": 6
+  },
+  {
+    "id": "SNAKES-SPARED",
+    "start": "SNAKES",
+    "goal": "SPARED",
+    "par": 4
+  },
+  {
+    "id": "SNORES-SPARES",
+    "start": "SNORES",
+    "goal": "SPARES",
+    "par": 3
+  },
+  {
+    "id": "SOARED-SPARKS",
+    "start": "SOARED",
+    "goal": "SPARKS",
+    "par": 3
+  },
+  {
+    "id": "SPARED-STAKES",
+    "start": "SPARED",
+    "goal": "STAKES",
+    "par": 3
+  },
+  {
+    "id": "SPARKS-SPICES",
+    "start": "SPARKS",
+    "goal": "SPICES",
+    "par": 3
+  },
+  {
+    "id": "SPICES-STARTS",
+    "start": "SPICES",
+    "goal": "STARTS",
+    "par": 4
+  },
+  {
+    "id": "SPIDER-STATED",
+    "start": "SPIDER",
+    "goal": "STATED",
+    "par": 9
+  },
+  {
+    "id": "SPIKES-STATES",
+    "start": "SPIKES",
+    "goal": "STATES",
+    "par": 5
+  },
+  {
+    "id": "SPINES-STAYED",
+    "start": "SPINES",
+    "goal": "STAYED",
+    "par": 6
+  },
+  {
+    "id": "STONE-SHARE",
+    "start": "STONE",
+    "goal": "SHARE",
+    "par": 3
+  },
+  {
+    "id": "SUN-MAP",
+    "start": "SUN",
+    "goal": "MAP",
+    "par": 3
+  }
+]
