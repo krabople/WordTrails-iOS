@@ -148,10 +148,10 @@ enum SocialError: LocalizedError {
         guard let state, selected?.status == .ended else { return }
         if let run = myRun, run.isComplete { record(run,in:store,state:state) }
     }
-    func player(_ player: GKPlayer, receivedTurnEventFor match: GKTurnBasedMatch, didBecomeActive: Bool) {
+    nonisolated func player(_ player: GKPlayer, receivedTurnEventFor match: GKTurnBasedMatch, didBecomeActive: Bool) {
         Task { @MainActor in await refresh(); if selected?.matchID == match.matchID || didBecomeActive { await open(match) } }
     }
-    func player(_ player: GKPlayer, matchEnded match: GKTurnBasedMatch) { Task { @MainActor in await refresh(); if selected?.matchID == match.matchID { await open(match) } } }
+    nonisolated func player(_ player: GKPlayer, matchEnded match: GKTurnBasedMatch) { Task { @MainActor in await refresh(); if selected?.matchID == match.matchID { await open(match) } } }
 }
 
 struct Matchmaker: UIViewControllerRepresentable {
@@ -169,9 +169,9 @@ struct Matchmaker: UIViewControllerRepresentable {
     @MainActor final class Coordinator: NSObject, GKTurnBasedMatchmakerViewControllerDelegate {
         let service: GameCenterService
         init(_ service:GameCenterService) { self.service = service }
-        func turnBasedMatchmakerViewControllerWasCancelled(_ viewController:GKTurnBasedMatchmakerViewController) { service.showMatchmaker = false }
-        func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,didFailWithError error:Error) { service.showMatchmaker = false; service.error = error.localizedDescription }
-        func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,didFind match:GKTurnBasedMatch) { service.showMatchmaker = false; Task { await service.open(match) } }
-        func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,playerQuitFor match:GKTurnBasedMatch) { Task { await service.refresh() } }
+        nonisolated func turnBasedMatchmakerViewControllerWasCancelled(_ viewController:GKTurnBasedMatchmakerViewController) { Task { @MainActor in service.showMatchmaker = false } }
+        nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,didFailWithError error:Error) { Task { @MainActor in service.showMatchmaker = false; service.error = error.localizedDescription } }
+        nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,didFind match:GKTurnBasedMatch) { Task { @MainActor in service.showMatchmaker = false; await service.open(match) } }
+        nonisolated func turnBasedMatchmakerViewController(_ viewController:GKTurnBasedMatchmakerViewController,playerQuitFor match:GKTurnBasedMatch) { Task { @MainActor in await service.refresh() } }
     }
 }

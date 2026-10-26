@@ -2,7 +2,7 @@ import SwiftUI
 import TrailCore
 
 @MainActor final class TrailStore: ObservableObject {
-    @Published var progress = Progress()
+    @Published var progress = TrailCore.Progress()
     @Published var run: Run?
     @Published var message = ""
     @Published var awarded = 0
@@ -24,7 +24,7 @@ import TrailCore
             }
         } catch { persistenceError = "Your saved progress couldn’t be opened. It has been kept on this device. \(error.localizedDescription)"; showRecoveryWarning = true }
     }
-    struct Saved: Codable { var progress: Progress; var run: Run? }
+    struct Saved: Codable { var progress: TrailCore.Progress; var run: Run? }
     func save() {
         guard persistenceError == nil else { return }
         do { try JSONEncoder().encode(Saved(progress: progress, run: run)).write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication]) }
