@@ -5,7 +5,7 @@ import TrailCore
     @StateObject private var store = TrailStore()
     @StateObject private var social = GameCenterService()
     var body: some Scene {
-        WindowGroup { RootView().environmentObject(store).environmentObject(social).tint(Palette.forest) }
+        WindowGroup { RootView().environmentObject(store).environmentObject(social).tint(Palette.ink) }
     }
 }
 
@@ -52,7 +52,7 @@ struct TrailHome: View {
     var body: some View {
         ScrollView { VStack(alignment:.leading,spacing:22) {
             HStack { VStack(alignment:.leading,spacing:6) { Text("WORD TRAILS").font(.caption.weight(.semibold)).tracking(3); Text("Find your way.").font(.system(.largeTitle,design:.serif)) }; Spacer(); Label("\(store.progress.streak)",systemImage:"flame").font(.title3).accessibilityLabel("\(store.progress.streak) day streak") }
-            Landscape(planted:store.progress.planted.count).frame(height:155).background(Palette.paper,in:RoundedRectangle(cornerRadius:24))
+            Landscape(planted:store.progress.planted.count).frame(height:155).background(Palette.paper,in:RoundedRectangle(cornerRadius:24)).clipShape(RoundedRectangle(cornerRadius:24))
             Picker("Word length",selection:$length) { ForEach(3...6,id:\.self) { Text("\($0) letters").tag($0) } }.pickerStyle(.segmented)
             PaperCard {
                 VStack(alignment:.leading,spacing:16) {
@@ -72,7 +72,7 @@ struct TrailHome: View {
             Button(mode == .solo ? "Start a practice trail" : "Play with \(guide.name) · Bot") { requestStart(daily:false) }.buttonStyle(TrailButton())
             Text("3 letters: Meadow · 4: Woodland · 5: Highlands · 6: Summit").font(.caption).foregroundStyle(.secondary)
         }.padding(20) }
-        .background(Color(.systemGroupedBackground)).navigationTitle("").toolbar { Button { showSettings = true } label:{ Image(systemName:"gearshape") }.accessibilityLabel("Settings and help") }
+        .background(Palette.canvas).navigationTitle("").toolbar { Button { showSettings = true } label:{ Image(systemName:"gearshape") }.accessibilityLabel("Settings and help") }
         .navigationDestination(isPresented:$playing) { LocalPlayView() }
         .sheet(isPresented:$showSettings) { NavigationStack { SettingsView() } }
         .confirmationDialog("Start a new trail? Your current unfinished trail will be replaced.",isPresented:$replace,titleVisibility:.visible) { Button("Start new trail") { start(daily:pendingDaily) }; Button("Keep current trail",role:.cancel) {} }
@@ -106,12 +106,12 @@ struct LocalPlayView: View {
                             Text(store.busy ? "\(run.guide?.name ?? "Guide") is finding a step…" : "Change one letter to make the next word.").font(.subheadline)
                             HStack { TextField("\(run.puzzle.length)-letter word",text:$input).textInputAutocapitalization(.characters).autocorrectionDisabled().keyboardType(.asciiCapable).font(.system(.title2,design:.monospaced)).submitLabel(.go).focused($focused).onSubmit(submit).accessibilityIdentifier("wordInput"); Button("Add step",action:submit).font(.headline).disabled(store.busy || input.isEmpty).accessibilityIdentifier("submitWord") }.padding(14).background(Color(.secondarySystemGroupedBackground),in:RoundedRectangle(cornerRadius:14))
                             if run.mode != .versus { HStack { Button("Undo",systemImage:"arrow.uturn.backward") { store.undo() }.disabled(run.moves == 0 || store.busy); Spacer(); Button("Hint",systemImage:"lightbulb") { store.hint() }.disabled(store.busy) }.buttonStyle(.bordered) }
-                            Text("Goal: \(run.puzzle.goal)").font(.headline).foregroundStyle(Palette.forest)
+                            Text("Goal: \(run.puzzle.goal)").font(.headline).foregroundStyle(Palette.ink)
                         }.id("input")
                     }
                     if !store.message.isEmpty { Text(store.message).font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("gameMessage") }
                 }
-            }.padding(20) }.background(Color(.systemGroupedBackground))
+            }.padding(20) }.background(Palette.canvas)
             .onChange(of:store.run?.chain.count) { _,_ in withAnimation { proxy.scrollTo("input",anchor:.bottom) } }
         }.navigationTitle("On the trail").navigationBarTitleDisplayMode(.inline)
         .onDisappear { store.save() }

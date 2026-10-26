@@ -1,6 +1,8 @@
 import SwiftUI
 
 enum Palette {
+    static let canvas = Color(uiColor:UIColor { traits in traits.userInterfaceStyle == .dark ? UIColor(red:0.075,green:0.10,blue:0.085,alpha:1) : UIColor(red:0.975,green:0.97,blue:0.945,alpha:1) })
+    static let ink = Color(uiColor:UIColor { traits in traits.userInterfaceStyle == .dark ? UIColor(red:0.78,green:0.86,blue:0.72,alpha:1) : UIColor(red:0.13,green:0.27,blue:0.22,alpha:1) })
     static let paper = Color(red:0.97,green:0.96,blue:0.92)
     static let forest = Color(red:0.13,green:0.27,blue:0.22)
     static let sage = Color(red:0.77,green:0.83,blue:0.71)
@@ -51,7 +53,7 @@ struct WordTiles: View {
             ForEach(Array(word.enumerated()), id:\.offset) { i, letter in
                 let old = previous.map(Array.init)
                 let changed = old != nil && i < old!.count && old![i] != letter
-                Text(String(letter)).font(.system(.title2,design:.rounded,weight:.semibold)).frame(maxWidth:.infinity,minHeight:48)
+                Text(String(letter)).font(.system(.title2,design:.rounded,weight:.semibold)).underline(changed).lineLimit(1).minimumScaleFactor(0.5).frame(maxWidth:.infinity,minHeight:48)
                     .background(changed ? Palette.ochre.opacity(0.17) : (active ? Palette.sage.opacity(0.45) : Color.primary.opacity(0.035)),in:RoundedRectangle(cornerRadius:11))
                     .overlay(RoundedRectangle(cornerRadius:11).stroke(active ? Palette.forest.opacity(0.45) : Color.primary.opacity(0.08),lineWidth:1))
             }

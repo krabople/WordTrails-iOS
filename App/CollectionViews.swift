@@ -8,14 +8,14 @@ struct GardenView: View {
     var body: some View {
         ScrollView { VStack(alignment:.leading,spacing:22) {
             Text("Small steps.\nSomething growing.").font(.system(.largeTitle,design:.serif))
-            Landscape(planted:store.progress.planted.count).frame(height:210).background(Palette.paper,in:RoundedRectangle(cornerRadius:24))
+            Landscape(planted:store.progress.planted.count).frame(height:210).background(Palette.paper,in:RoundedRectangle(cornerRadius:24)).clipShape(RoundedRectangle(cornerRadius:24))
             HStack { Label("\(store.progress.seeds) seeds",systemImage:"leaf.fill").font(.title3.weight(.semibold)); Spacer(); Text("\(store.progress.planted.count) / \(Plant.all.count) planted").foregroundStyle(.secondary) }
             Text("Earn 3 seeds the first time you complete each trail in each mode. A route at par with no hints earns 2 more. Plant something for 10 seeds. Replays are always welcome.").font(.subheadline).foregroundStyle(.secondary)
             LazyVGrid(columns:[GridItem(.adaptive(minimum:145))],spacing:14) {
                 ForEach(Plant.all) { plant in
                     let planted = store.progress.planted.contains(plant.id)
                     VStack(spacing:14) {
-                        Image(systemName:plant.symbol).font(.system(size:38,weight:.light)).foregroundStyle(planted ? Palette.forest : .secondary).frame(height:56)
+                        Image(systemName:plant.symbol).font(.system(size:38,weight:.light)).foregroundStyle(planted ? Palette.ink : .secondary).frame(height:56)
                         Text(plant.name).font(.headline)
                         Button(planted ? "Growing" : "Plant · 10 seeds") { confirm = plant.id }.buttonStyle(.bordered).disabled(planted || store.progress.seeds < 10)
                     }.frame(maxWidth:.infinity).padding(18).background(Color(.secondarySystemGroupedBackground),in:RoundedRectangle(cornerRadius:20))
@@ -33,7 +33,7 @@ struct GardenView: View {
                     if let next = garden.nextMilestone { Text("Next plant at \(next) co-op trails").font(.caption).foregroundStyle(.secondary) }
                 } }
             }
-        }.padding(20) }.background(Color(.systemGroupedBackground)).navigationTitle("Garden")
+        }.padding(20) }.background(Palette.canvas).navigationTitle("Garden")
         .task { social.syncGardens(into:store) }
         .confirmationDialog("Plant for 10 seeds?",isPresented:Binding(get:{confirm != nil},set:{if !$0 {confirm = nil}}),titleVisibility:.visible) { Button("Plant") { if let confirm { store.plant(confirm) }; confirm = nil }; Button("Cancel",role:.cancel) { confirm = nil } }
     }
