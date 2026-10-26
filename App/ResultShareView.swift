@@ -51,7 +51,7 @@ struct ResultShareView:View {
                     Button("Share card",systemImage:"square.and.arrow.up"){sharing=true}.buttonStyle(TrailButton()).accessibilityIdentifier("shareCard")
                     Text("Your route stays a secret. Share your card and a small link to Word Trails.").font(.subheadline).foregroundStyle(.secondary)
                 }else{ProgressView("Preparing your card…")}
-            }.padding(20)}.background(Palette.canvas).navigationTitle("Your trail card").navigationBarTitleDisplayMode(.inline)
+            }.padding(20).trailReadableWidth(620)}.background(Palette.canvas).navigationTitle("Your trail card").navigationBarTitleDisplayMode(.inline)
             .toolbar{Button("Done"){dismiss()}}
             .task{
                 let renderer=ImageRenderer(content:ResultCard(run:run));renderer.scale=2;image=renderer.uiImage
@@ -69,6 +69,14 @@ struct ResultShareView:View {
 struct ResultActivitySheet:UIViewControllerRepresentable {
     let image:UIImage
     let url:URL
-    func makeUIViewController(context:Context)->UIActivityViewController{UIActivityViewController(activityItems:[image,url],applicationActivities:nil)}
+    func makeUIViewController(context:Context)->UIActivityViewController{
+        let controller=UIActivityViewController(activityItems:[image,url],applicationActivities:nil)
+        if let popover=controller.popoverPresentationController{
+            popover.sourceView=controller.view
+            popover.sourceRect=CGRect(x:controller.view.bounds.midX,y:controller.view.bounds.midY,width:1,height:1)
+            popover.permittedArrowDirections=[]
+        }
+        return controller
+    }
     func updateUIViewController(_ controller:UIActivityViewController,context:Context){}
 }

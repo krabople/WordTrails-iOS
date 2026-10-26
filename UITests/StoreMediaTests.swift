@@ -1,0 +1,92 @@
+import XCTest
+import UIKit
+
+final class StoreMediaTests:XCTestCase {
+    private var app=XCUIApplication()
+    private var documents:URL{FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0]}
+    private func launch(_ extra:[String]=[]) {
+        XCUIDevice.shared.orientation = .portrait
+        app=XCUIApplication();app.launchArguments=["--ui-test","--store-capture"]+extra;app.launch()
+        XCTAssertTrue(app.buttons["continueTrail"].waitForExistence(timeout:30))
+    }
+    private func tap(_ item:XCUIElement) {
+        XCTAssertTrue(item.waitForExistence(timeout:15))
+        for _ in 0..<8{if item.isHittable{break};app.swipeUp()}
+        item.tap()
+    }
+    private func capture(_ name:String) throws {
+        Thread.sleep(forTimeInterval:0.8)
+        let shot=app.screenshot()
+        let directory=documents.appendingPathComponent("store-captures",isDirectory:true)
+        try FileManager.default.createDirectory(at:directory,withIntermediateDirectories:true)
+        try shot.pngRepresentation.write(to:directory.appendingPathComponent(name+".png"))
+        let attachment=XCTAttachment(screenshot:shot);attachment.name=name;attachment.lifetime = .keepAlways;add(attachment)
+    }
+    func testStoreScreenshots() throws {
+        launch()
+        try capture("01-Daily")
+        tap(app.buttons["continueTrail"])
+        XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:10))
+        try capture("02-Wordplay")
+        launch(["--summit"]);tap(app.buttons["continueTrail"])
+        try capture("03-Summit")
+        launch(["--completed"])
+        tap(app.buttons["completedTrailHistory"])
+        tap(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","completedAttempt-")).firstMatch)
+        XCTAssertTrue(app.buttons["shareSavedResult"].waitForExistence(timeout:10))
+        try capture("04-Shortest")
+        app.navigationBars.buttons.element(boundBy:0).tap()
+        try capture("05-History")
+        tap(app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@","completedAttempt-")).firstMatch)
+        tap(app.buttons["shareSavedResult"])
+        XCTAssertTrue(app.buttons["shareCard"].waitForExistence(timeout:10))
+        try capture("06-Share")
+        app.buttons["Done"].tap()
+        tap(app.buttons["Garden"])
+        try capture("07-Garden")
+        tap(app.buttons["Stats"])
+        try capture("08-Statistics")
+        // Move the first badge to the top, keeping the real list intact.
+        let firstBadge=app.cells.containing(NSPredicate(format:"label CONTAINS %@","First steps")).firstMatch
+        for _ in 0..<8{if firstBadge.isHittable{break};app.swipeUp()}
+        app.swipeUp()
+        try capture("09-Badges")
+        launch();tap(app.buttons["reminderSettings"])
+        XCTAssertTrue(app.switches["dailyReminderToggle"].waitForExistence(timeout:10))
+        try capture("10-Reminder")
+    }
+    func testIPadRotationAndShare() throws {
+        guard UIDevice.current.userInterfaceIdiom == .pad else{throw XCTSkip("iPad layout check")}
+        launch();tap(app.buttons["continueTrail"])
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:10))
+        try capture("QA-iPad-Landscape")
+        let input=app.textFields["wordInput"];input.tap();input.typeText("HUNK\n")
+        XCTAssertFalse(app.staticTexts["gameMessage"].exists)
+        XCUIDevice.shared.orientation = .portrait
+        try capture("QA-iPad-Portrait")
+    }
+    func testRecordGameplay() throws {
+        launch(["--record-game"]);tap(app.buttons["continueTrail"])
+        XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:10))
+        try Data().write(to:documents.appendingPathComponent("store-video-ready"))
+        let started=documents.appendingPathComponent("store-video-started")
+        let deadline=Date().addingTimeInterval(90)
+        while !FileManager.default.fileExists(atPath:started.path) && Date()<deadline{Thread.sleep(forTimeInterval:0.25)}
+        XCTAssertTrue(FileManager.default.fileExists(atPath:started.path))
+        Thread.sleep(forTimeInterval:2)
+        let input=app.textFields["wordInput"]
+        for word in ["CAN","PAN","PIN","PIE"] {
+            input.tap();input.typeText(word+"\n");Thread.sleep(forTimeInterval:1.1)
+        }
+        if app.alerts.buttons["Lovely"].waitForExistence(timeout:1){app.alerts.buttons["Lovely"].tap()}
+        XCTAssertTrue(app.staticTexts["Shortest possible route"].waitForExistence(timeout:10))
+        Thread.sleep(forTimeInterval:3)
+        tap(app.buttons["shareResult"])
+        XCTAssertTrue(app.buttons["shareCard"].waitForExistence(timeout:10))
+        Thread.sleep(forTimeInterval:3)
+        app.buttons["Done"].tap();tap(app.buttons["Garden"])
+        Thread.sleep(forTimeInterval:3)
+        try Data().write(to:documents.appendingPathComponent("store-video-done"))
+    }
+}

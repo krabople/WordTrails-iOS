@@ -48,6 +48,7 @@ struct WordTiles: View {
     let word: String
     var previous: String? = nil
     var active = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
     var body: some View {
         HStack(spacing:6) {
             ForEach(Array(word.enumerated()), id:\.offset) { i, letter in
@@ -57,7 +58,7 @@ struct WordTiles: View {
                     .background(changed ? Palette.ochre.opacity(0.17) : (active ? Palette.sage.opacity(0.45) : Color.primary.opacity(0.035)),in:RoundedRectangle(cornerRadius:11))
                     .overlay(RoundedRectangle(cornerRadius:11).stroke(active ? Palette.forest.opacity(0.45) : Color.primary.opacity(0.08),lineWidth:1))
             }
-        }.accessibilityElement(children:.ignore).accessibilityLabel(word.map(String.init).joined(separator:" "))
+        }.frame(maxWidth:sizeClass == .regular ? CGFloat(word.count)*78 : .infinity).frame(maxWidth:.infinity).accessibilityElement(children:.ignore).accessibilityLabel(word.map(String.init).joined(separator:" "))
     }
 }
 struct PaperCard<Content: View>: View {
@@ -67,4 +68,14 @@ struct PaperCard<Content: View>: View {
 struct TrailButton: ButtonStyle {
     @Environment(\.isEnabled) private var enabled
     func makeBody(configuration:Configuration) -> some View { configuration.label.font(.headline).frame(maxWidth:.infinity,minHeight:50).foregroundStyle(.white).background(Palette.forest.opacity(enabled ? (configuration.isPressed ? 0.75 : 1) : 0.35),in:RoundedRectangle(cornerRadius:15)) }
+}
+
+// Keep reading and interaction comfortable in full-screen iPad and narrow windows.
+extension View {
+    func trailReadableWidth(_ maximum:CGFloat=740)->some View {
+        frame(maxWidth:maximum).frame(maxWidth:.infinity)
+    }
+    func trailListWidth()->some View {
+        frame(maxWidth:960).frame(maxWidth:.infinity).background(Palette.canvas)
+    }
 }

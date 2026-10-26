@@ -10,7 +10,7 @@ settings:
   base:
     SWIFT_VERSION: '5.0'
     DEVELOPMENT_TEAM: 6YYA8L76Y8
-    MARKETING_VERSION: '1.3.0'
+    MARKETING_VERSION: '1.4.0'
     CURRENT_PROJECT_VERSION: '1'
 targets:
   WordTrails:
@@ -25,7 +25,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.krabople.wordtrails
-        TARGETED_DEVICE_FAMILY: '1'
+        TARGETED_DEVICE_FAMILY: '1,2'
         SUPPORTS_MACCATALYST: NO
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -44,6 +44,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         ITSAppUsesNonExemptEncryption: false
         NSGKFriendListUsageDescription: Word Trails shows your Game Center friends so you can invite them to a trail.
         UIApplicationSceneManifest:
@@ -58,6 +59,7 @@ targets:
     sources: [UITests]
     dependencies:
       - target: WordTrails
+      - package: TrailCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.krabople.wordtrails.uitests

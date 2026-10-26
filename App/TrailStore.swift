@@ -36,6 +36,7 @@ import TrailCore
             run=Run(puzzle:Puzzle(id:"example-CAT-DOG",start:"CAT",goal:"DOG",par:4,minimumSteps:3))
             progress.track(run!);showWelcome=false
         }
+        prepareStoreCapture()
         #endif
     }
     struct Saved:Codable{var progress:TrailCore.Progress;var run:Run?}

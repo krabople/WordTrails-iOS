@@ -36,7 +36,7 @@ struct GardenView: View {
                     if let next = garden.nextMilestone { Text("Next plant at \(next) co-op trails").font(.caption).foregroundStyle(.secondary) }
                 } }
             }
-        }.padding(20) }.background(Palette.canvas).navigationTitle("Garden")
+        }.padding(20).trailReadableWidth(1000) }.background(Palette.canvas).navigationTitle("Garden")
         .task { social.syncGardens(into:store) }
         .confirmationDialog("Plant for 10 seeds?",isPresented:Binding(get:{confirm != nil},set:{if !$0 {confirm = nil}}),titleVisibility:.visible) { Button("Plant") { if let confirm { store.plant(confirm) }; confirm = nil }; Button("Cancel",role:.cancel) { confirm = nil } }
     }
@@ -81,7 +81,7 @@ struct JournalView:View {
                     NavigationLink{CompletedAttemptView(run:run)}label:{CompletedTrailRow(run:run)}
                 }
             }
-        }.navigationTitle("Statistics")
+        }.trailListWidth().navigationTitle("Statistics")
     }
 }
 struct DifficultyStatsView:View {
@@ -123,12 +123,12 @@ struct SettingsView:View {
                 Text("Your earlier seeds, plants, streak and completed trails are preserved. Personal progress stays on this device. Shared gardens can be recovered from completed co-op matches retained in Game Center.")
             }
             Section("Privacy"){
-                Text("Solo play and daily reminders work without an account or internet connection. Your iPhone schedules reminders only after you opt in. Co-op uses Apple Game Center for identity, friends, match storage and turn alerts. No advertising, analytics SDK, chat, contact upload or independent account database.")
+                Text("Solo play and daily reminders work without an account or internet connection. Your device schedules reminders only after you opt in. Co-op uses Apple Game Center for identity, friends, match storage and turn alerts. No advertising, analytics SDK, chat, contact upload or independent account database.")
                 Link("Apple Game Center and privacy",destination:URL(string:"https://www.apple.com/legal/privacy/data/en/game-center/")!)
             }
             Section("Accessibility"){Text("System text sizes, dark mode and VoiceOver are supported. Changed letters are underlined as well as tinted. Scenes are static; larger text can be read by scrolling.")}
             Section{Text("Word Trails · Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"))").font(.caption)}
-        }.navigationTitle("Field notes").toolbar{Button("Done"){dismiss()}}
+        }.trailListWidth().navigationTitle("Field notes").toolbar{Button("Done"){dismiss()}}
     }
 }
 struct DictionaryView:View {

@@ -37,11 +37,11 @@ import TrailCore
             var settings=await center.notificationSettings()
             if settings.authorizationStatus == .notDetermined{
                 let granted=try await center.requestAuthorization(options:[.alert,.sound])
-                guard granted else{permissionDenied=true;enabled=false;persist();message="Reminders are off. You can allow notifications in iPhone Settings.";return}
+                guard granted else{permissionDenied=true;enabled=false;persist();message="Reminders are off. You can allow notifications in Settings.";return}
                 settings=await center.notificationSettings()
             }
             guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional || settings.authorizationStatus == .ephemeral else{
-                permissionDenied=true;enabled=false;persist();message="Allow notifications in iPhone Settings, then turn on the daily reminder.";return
+                permissionDenied=true;enabled=false;persist();message="Allow notifications in Settings, then turn on the daily reminder.";return
             }
             try await schedule()
             permissionDenied=false;enabled=true;message=nil;persist()
@@ -84,11 +84,11 @@ struct ReminderSettingsView:View {
             Section{
                 Toggle("Daily reminder",isOn:Binding(get:{reminders.enabled},set:{value in Task{await reminders.setEnabled(value)}})).disabled(reminders.busy).accessibilityIdentifier("dailyReminderToggle")
                 DatePicker("Reminder time",selection:Binding(get:{reminders.date},set:{value in Task{await reminders.changeTime(value)}}),displayedComponents:.hourAndMinute).disabled(reminders.busy || !reminders.enabled).accessibilityIdentifier("dailyReminderTime")
-                Text("A daily notification at your chosen local time. Reminders are off until you opt in, and you can change the time or turn them off here. Your iPhone schedules them; no internet connection is needed.").font(.subheadline).foregroundStyle(.secondary)
+                Text("A daily notification at your chosen local time. Reminders are off until you opt in, and you can change the time or turn them off here. Your device schedules them; no internet connection is needed.").font(.subheadline).foregroundStyle(.secondary)
             }
             if reminders.enabled{Section{Button("Send a test notification"){Task{await reminders.sendTest()}}.disabled(reminders.busy)}}
-            if reminders.permissionDenied{Section{Text("Notifications are disabled for Word Trails in iPhone Settings.");Button("Open iPhone Settings"){if let url=URL(string:UIApplication.openSettingsURLString){UIApplication.shared.open(url)}}}}
+            if reminders.permissionDenied{Section{Text("Notifications are disabled for Word Trails in Settings.");Button("Open Settings"){if let url=URL(string:UIApplication.openSettingsURLString){UIApplication.shared.open(url)}}}}
             if let message=reminders.message{Section{Text(message).foregroundStyle(.secondary)}}
-        }.navigationTitle("Daily reminder").task{await reminders.refresh()}
+        }.trailListWidth().navigationTitle("Daily reminder").task{await reminders.refresh()}
     }
 }

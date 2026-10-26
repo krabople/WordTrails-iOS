@@ -42,7 +42,7 @@ struct FriendsView:View {
                 }
             }
             if let error=social.error{Section{Text(error).foregroundStyle(.secondary)}}
-        }.navigationTitle("Co-op")
+        }.trailListWidth().navigationTitle("Co-op")
         .sheet(isPresented:$social.showMatchmaker){Matchmaker(service:social)}
         .navigationDestination(isPresented:$onlinePlay){OnlinePlayView()}
         .onChange(of:social.selected?.matchID){_,value in onlinePlay=value != nil}

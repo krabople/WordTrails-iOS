@@ -51,7 +51,7 @@ struct WelcomeView:View {
             Text("Play on your own, at your own pace. Or invite a friend for an optional co-op trail. No account is needed for solo play.")
             Text("Beat par by finding a short route. A shortest solution is always possible using familiar words, and you can use unusual dictionary words too.").font(.subheadline)
             Button("Take the first step"){store.welcome()}.buttonStyle(TrailButton())
-        }.padding(24)}.interactiveDismissDisabled().presentationDragIndicator(.visible)
+        }.padding(24).trailReadableWidth()}.interactiveDismissDisabled().presentationDragIndicator(.visible)
     }
 }
 struct TrailHome:View {
@@ -83,7 +83,7 @@ struct TrailHome:View {
             Text("A quiet daily challenge").font(.system(.title2,design:.serif))
             Text("No timer. No opponent. Find your route, beat par, and grow a little each day.").font(.subheadline).foregroundStyle(.secondary)
             Button("Start a practice trail"){requestStart(daily:false)}.buttonStyle(.bordered).frame(maxWidth:.infinity).accessibilityIdentifier("practiceTrail")
-        }.padding(20)}
+        }.padding(20).trailReadableWidth()}
         .background(Palette.canvas).navigationTitle("")
         .toolbar{
             Button{showReminders=true}label:{Image(systemName:"bell")}.accessibilityLabel("Daily reminder").accessibilityIdentifier("reminderSettings")
@@ -121,14 +121,35 @@ struct LocalPlayView:View {
     @State private var input=""
     @State private var sharing=false
     @FocusState private var focused:Bool
+    @Environment(\.dynamicTypeSize) private var textSize
     var body:some View {
-        ScrollViewReader{proxy in
-            ScrollView{VStack(alignment:.leading,spacing:18){
-                if let run=store.run{
+        GeometryReader{geometry in
+            ScrollViewReader{proxy in
+                ScrollView{
+                    if let run=store.run{
+                        let columns=geometry.size.width>=900 && !textSize.isAccessibilitySize
+                        let layout=columns ? AnyLayout(HStackLayout(alignment:.top,spacing:32)):AnyLayout(VStackLayout(alignment:.leading,spacing:22))
+                        layout{
+                            route(run).frame(maxWidth:.infinity)
+                            controls(run).frame(maxWidth:columns ? 340:.infinity,alignment:.leading)
+                        }.padding(24).trailReadableWidth(columns ? 1100:740)
+                    }
+                }.background(Palette.canvas)
+                .onChange(of:store.run?.chain.count){_,_ in withAnimation{proxy.scrollTo(store.run?.isComplete == true ? "completion":"input",anchor:.bottom)}}
+            }
+        }.navigationTitle("On the trail").navigationBarTitleDisplayMode(.inline).onDisappear{store.save()}
+        .sheet(isPresented:$sharing){if let run=store.run{ResultShareView(run:run)}}
+    }
+    private func route(_ run:Run)->some View {
+        VStack(alignment:.leading,spacing:18){
                     HStack{Label(run.isDaily ? "Daily":"Practice",systemImage:"figure.walk");Spacer();Text("Par \(run.puzzle.par) · \(run.moves) steps").monospacedDigit()}.font(.subheadline)
                     Text("\(run.puzzle.start) to \(run.puzzle.goal)").font(.system(.largeTitle,design:.serif))
                     Text("Shortest possible: \(run.puzzle.minimum) steps").font(.caption).foregroundStyle(.secondary)
                     ForEach(Array(run.chain.enumerated()),id:\.offset){i,word in VStack(spacing:8){if i>0{Image(systemName:"arrow.down").font(.caption).foregroundStyle(.secondary)};WordTiles(word:word,previous:i>0 ? run.chain[i-1]:nil,active:i==run.chain.count-1)}}
+        }
+    }
+    private func controls(_ run:Run)->some View {
+        VStack(alignment:.leading,spacing:18){
                     if run.isComplete{completion(run).id("completion")}
                     else{VStack(alignment:.leading,spacing:12){
                         Text("Change one letter to make the next word.").font(.subheadline)
@@ -136,12 +157,7 @@ struct LocalPlayView:View {
                         HStack{Button("Undo",systemImage:"arrow.uturn.backward"){store.undo()}.disabled(run.moves==0);Spacer();Button("Hint",systemImage:"lightbulb"){store.hint()}}.buttonStyle(.bordered)
                         Text("Goal: \(run.puzzle.goal)").font(.headline).foregroundStyle(Palette.ink)
                     }.id("input")}
-                    if !store.message.isEmpty{Text(store.message).font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("gameMessage")}
-                }
-            }.padding(20)}.background(Palette.canvas)
-            .onChange(of:store.run?.chain.count){_,_ in withAnimation{proxy.scrollTo(store.run?.isComplete == true ? "completion":"input",anchor:.bottom)}}
-        }.navigationTitle("On the trail").navigationBarTitleDisplayMode(.inline).onDisappear{store.save()}
-        .sheet(isPresented:$sharing){if let run=store.run{ResultShareView(run:run)}}
+                    if !store.message.isEmpty{Text(store.message).font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("gameMessage")}        }
     }
     private func submit(){store.submit(input);if store.message.isEmpty{input=""};if store.run?.isComplete==true{focused=false}}
     private func completion(_ run:Run)->some View{

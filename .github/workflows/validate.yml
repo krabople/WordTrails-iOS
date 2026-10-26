@@ -12,6 +12,10 @@ concurrency:
   cancel-in-progress: true
 jobs:
   validate:
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [iPhone, iPad]
     runs-on: macos-26
     timeout-minutes: 40
     steps:
@@ -24,16 +28,20 @@ jobs:
         run: |
           swift Support/make-icon.swift App/Assets.xcassets/AppIcon.appiconset
           xcodegen generate
-      - name: Select iPhone simulator
+      - name: Select full-size store simulator
+        env:
+          DEVICE_FAMILY: ${{ matrix.device }}
         run: |
           python3 - <<'PY'
           import json, subprocess, os
           data=json.loads(subprocess.check_output(['xcrun','simctl','list','devices','available','-j']))
-          phones=[d for runtime,devices in data['devices'].items() if 'iOS' in runtime for d in devices if d.get('isAvailable') and d['name'].startswith('iPhone')]
-          if not phones: raise SystemExit('No available iPhone simulator')
+          family=os.environ['DEVICE_FAMILY']
+          phones=[d for runtime,devices in data['devices'].items() if 'iOS' in runtime for d in devices if d.get('isAvailable') and d['name'].startswith(family) and ('Pro Max' in d['name'] if family=='iPhone' else 'Pro' in d['name'] and '13-inch' in d['name'])]
+          if not phones: raise SystemExit('No available full-size '+family+' simulator')
+          print(phones[0]['name'])
           with open(os.environ['GITHUB_ENV'],'a') as f: f.write('SIMULATOR_ID='+phones[0]['udid']+'\n')
           PY
-      - name: Compile iPhone app and tests
+      - name: Compile universal app and tests
         timeout-minutes: 15
         run: |
           set -o pipefail
@@ -43,11 +51,21 @@ jobs:
         run: |
           xcrun simctl boot "$SIMULATOR_ID" || true
           xcrun simctl bootstatus "$SIMULATOR_ID" -b
+          xcrun simctl status_bar "$SIMULATOR_ID" override --time '9:41' --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100
       - name: Play complete games and capture visual checks
         timeout-minutes: 15
         run: |
           set -o pipefail
-          xcodebuild test-without-building -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -derivedDataPath .build/DerivedData -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 -resultBundlePath .build/WordTrails.xcresult CODE_SIGNING_ALLOWED=NO | tee .build/xcode-test.log
+          xcodebuild test-without-building -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -derivedDataPath .build/DerivedData -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 -skip-testing:WordTrailsUITests/StoreMediaTests/testRecordGameplay -resultBundlePath .build/WordTrails.xcresult CODE_SIGNING_ALLOWED=NO | tee .build/xcode-test.log
+      - name: Record actual gameplay
+        timeout-minutes: 12
+        run: python3 Support/capture-video.py
+      - name: Compose store screenshots from real captures
+        run: |
+          RUNNER_DATA=$(xcrun simctl get_app_container "$SIMULATOR_ID" com.krabople.wordtrails.uitests.xctrunner data)
+          mkdir -p .build/store-media/originals
+          cp "$RUNNER_DATA/Documents/store-captures/"*.png .build/store-media/originals/
+          swift Support/make-store-assets.swift .build/store-media/originals .build/store-media/screenshots
       - name: Export screenshot attachments
         if: always()
         run: |
@@ -58,10 +76,11 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: WordTrails-validation
+          name: WordTrails-validation-${{ matrix.device }}
           path: |
             .build/screenshots/
             .build/xcode-test.log
             .build/xcode-build.log
-            .build/WordTrails.xcresult/
-          retention-days: 14
+            .build/store-media/
+            .build/recording-test.log
+          retention-days: 7

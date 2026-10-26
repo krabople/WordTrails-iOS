@@ -20,7 +20,7 @@ struct CompletedTrailsView:View {
             ForEach(attempts){run in
                 NavigationLink{CompletedAttemptView(run:run)}label:{CompletedTrailRow(run:run)}.accessibilityIdentifier("completedAttempt-\(run.id.uuidString)")
             }
-        }.navigationTitle("Completed trails").searchable(text:$query,prompt:"Find a word in your route")
+        }.trailListWidth().navigationTitle("Completed trails").searchable(text:$query,prompt:"Find a word in your route")
     }
 }
 struct CompletedTrailRow:View {
@@ -55,7 +55,7 @@ struct CompletedAttemptView:View {
                     WordTiles(word:word,previous:index>0 ? run.chain[index-1]:nil)
                 }
             }
-        }.padding(20)}.background(Palette.canvas).navigationTitle("Your completed trail").navigationBarTitleDisplayMode(.inline)
+        }.padding(20).trailReadableWidth()}.background(Palette.canvas).navigationTitle("Your completed trail").navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented:$sharing){ResultShareView(run:run)}
     }
 }
