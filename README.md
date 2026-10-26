@@ -2,6 +2,10 @@
 
 Native iPhone word ladders, built with SwiftUI for iOS 17 and later. Solo and clearly labelled bot guides work entirely offline. Two-player co-op and asynchronous versus use Apple Game Center; ways2earn.com is not accessed or changed.
 
+Current internal beta: **1.0.0 (4)**. Apple processing is verified `VALID`, and the owner's internal group has testing enabled. The release source is tagged `testflight-1.0.0-4` (commit `74788625561bbae33ac8d753be383ec5b92d8cb9`). All 11 engine tests and four simulator UI tests passed. Two-device Game Center invitations, turn notifications and online outcomes still need real-device beta testing.
+
+<img src="docs/screenshots/trails.png" width="260" alt="Word Trails home screen"> <img src="docs/screenshots/coop.png" width="260" alt="Completed co-op trail with Oak, the bot guide">
+
 ## Play
 
 Change one letter at a time. Each step must be in the bundled 3–6-letter dictionary. Repeated words are disallowed. Par is computed by breadth-first search over that same dictionary.
