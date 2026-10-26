@@ -67,7 +67,7 @@ struct OnlinePlayView:View {
                 ForEach(Array(run.chain.enumerated()),id:\.offset){i,word in WordTiles(word:word,previous:i>0 ? run.chain[i-1]:nil,active:i==run.chain.count-1)}
                 if social.selected?.status == .ended {
                     Label(run.isComplete ? "Trail complete":"Trail ended",systemImage:run.isComplete ? "checkmark.seal":"flag").font(.title2)
-                    if run.isComplete{Text("Together: \(run.scoreDescription.lowercased())").font(.title2)}
+                    if run.isComplete{if run.isShortestSolution{ShortestRouteAcknowledgement()};Text("Together: \(run.scoreDescription.lowercased())").font(.title2)}
                     else{Text("A player left before this trail was finished.").foregroundStyle(.secondary)}
                 }else if social.myTurn{
                     TextField("Next \(run.puzzle.length)-letter word",text:$input).textFieldStyle(.roundedBorder).textInputAutocapitalization(.characters).autocorrectionDisabled().keyboardType(.asciiCapable).submitLabel(.go).onSubmit(submit)

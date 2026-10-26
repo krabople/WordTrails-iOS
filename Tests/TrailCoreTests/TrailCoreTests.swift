@@ -2,6 +2,40 @@ import XCTest
 @testable import TrailCore
 
 final class TrailCoreTests: XCTestCase {
+    func testCompletedHistoryKeepsAllAttemptsOriginalScoresAndIds() throws {
+        var progress=TrailCore.Progress()
+        for index in 0..<60 {
+            var run=Run(puzzle:Puzzle(id:"history-\(index)",start:"CAT",goal:"DOG",par:4,minimumSteps:3),mode:index%2==0 ? .solo:.coop)
+            run.chain=["CAT","COT","DOT","DOG"];run.totalMoves=3
+            run.startedAt=Date(timeIntervalSince1970:Double(index)*86400)
+            run.finishedAt=run.startedAt.addingTimeInterval(60)
+            progress.completed.append(run)
+        }
+        progress.completed.append(Run(puzzle:Puzzle(id:"unfinished",start:"CAT",goal:"DOG",par:4,minimumSteps:3)))
+        progress.seeds=37
+        let ids=progress.completed.map(\.id)
+        let restored=try JSONDecoder().decode(TrailCore.Progress.self,from:JSONEncoder().encode(progress))
+        let history=restored.completedAttempts()
+        XCTAssertEqual(history.count,60)
+        XCTAssertEqual(history.first?.puzzle.id,"history-59")
+        XCTAssertEqual(history.last?.puzzle.id,"history-0")
+        XCTAssertEqual(restored.completedAttempts(mode:.coop).count,30)
+        let saved=try XCTUnwrap(restored.completedAttempts(puzzleID:"history-0",mode:.solo).first)
+        XCTAssertEqual(saved.id,ids[0]);XCTAssertEqual(saved.chain,["CAT","COT","DOT","DOG"])
+        XCTAssertEqual(saved.puzzle.par,4);XCTAssertEqual(saved.scoreAgainstPar,-1)
+        XCTAssertEqual(restored.completed.map(\.id),ids);XCTAssertEqual(restored.seeds,37)
+    }
+    func testMinimumRecognitionRequiresCompletionAndDoesNotClaimUnassistedPlay() {
+        var run=Run(puzzle:Puzzle(id:"minimum",start:"CAT",goal:"DOG",par:4,minimumSteps:3))
+        XCTAssertFalse(run.isShortestSolution)
+        run.chain=["CAT","COT","DOT","DOG"];run.finishedAt=Date();run.hints=1;run.totalMoves=7
+        XCTAssertTrue(run.isShortestSolution)
+        run.chain=["CAT","HAT","HOT","COT","DOT","DOG"]
+        XCTAssertFalse(run.isShortestSolution)
+        var old=Run(puzzle:Puzzle(id:"legacy-minimum",start:"CAT",goal:"DOG",par:3))
+        old.chain=["CAT","COT","DOT","DOG"]
+        XCTAssertTrue(old.isShortestSolution)
+    }
     func testOneLetterRuleAndRejectedInput() throws {
         var run = Run(puzzle:Puzzle(id:"test",start:"CAT",goal:"DOG",par:3))
         XCTAssertThrowsError(try run.submit("CAT"))

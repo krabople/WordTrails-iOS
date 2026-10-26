@@ -66,6 +66,7 @@ struct TrailHome:View {
     @State private var showSettings=false
     @State private var showReminders=false
     private var daily:Puzzle{TrailCatalog.daily(length:length,date:today)}
+    private var dailyAttempt:Run?{store.progress.completedAttempts(puzzleID:daily.id,mode:.solo).first}
     var body:some View {
         ScrollView{VStack(alignment:.leading,spacing:22){
             if textSize.isAccessibilitySize{VStack(alignment:.leading,spacing:12){homeHeading;streak}}
@@ -76,10 +77,12 @@ struct TrailHome:View {
             if let run=store.run,!run.isComplete {
                 Button{playing=true}label:{PaperCard{HStack{Image(systemName:"arrow.uturn.forward");VStack(alignment:.leading){Text("Continue your trail").font(.headline);Text("\(run.puzzle.start) → \(run.puzzle.goal) · \(run.moves) steps").font(.caption)};Spacer();Image(systemName:"chevron.right")}}}.buttonStyle(.plain).accessibilityIdentifier("continueTrail")
             }
+            if !store.progress.completed.isEmpty {
+                NavigationLink{CompletedTrailsView()}label:{Label("Completed trails",systemImage:"clock.arrow.circlepath")}.buttonStyle(.bordered).accessibilityIdentifier("completedTrailHistory")
+            }
             Text("A quiet daily challenge").font(.system(.title2,design:.serif))
             Text("No timer. No opponent. Find your route, beat par, and grow a little each day.").font(.subheadline).foregroundStyle(.secondary)
-            Button("Start a practice trail"){requestStart(daily:false)}.buttonStyle(.bordered).frame(maxWidth:.infinity)
-            Text("Meadow · 3 letters\nWoodland · 4 letters\nHighlands · 5 letters\nSummit · 6 letters").font(.caption).foregroundStyle(.secondary)
+            Button("Start a practice trail"){requestStart(daily:false)}.buttonStyle(.bordered).frame(maxWidth:.infinity).accessibilityIdentifier("practiceTrail")
         }.padding(20)}
         .background(Palette.canvas).navigationTitle("")
         .toolbar{
@@ -100,7 +103,12 @@ struct TrailHome:View {
             HStack{Text(daily.start);Image(systemName:"arrow.right").font(.title3);Text(daily.goal)}.font(.system(.largeTitle,design:.serif,weight:.medium)).lineLimit(1).minimumScaleFactor(0.4)
             Text("A fresh trail each day. Same puzzle for everyone. Resets at midnight UTC.").font(.subheadline).foregroundStyle(.secondary)
             Text("Shortest route: \(daily.minimum) steps · Can you beat par?").font(.caption).foregroundStyle(.secondary)
-            Button(store.progress.claimed.contains("\(daily.id)-solo") ? "Play today’s trail again":"Walk today’s trail"){requestStart(daily:true)}.buttonStyle(TrailButton())
+            if let attempt=dailyAttempt {
+                NavigationLink{CompletedAttemptView(run:attempt)}label:{Label("View completed trail",systemImage:"checkmark.circle")}.buttonStyle(TrailButton()).accessibilityIdentifier("viewCompletedDaily")
+                Button("Play today’s trail again"){requestStart(daily:true)}.buttonStyle(.bordered).accessibilityIdentifier("replayDaily")
+            }else{
+                Button("Walk today’s trail"){requestStart(daily:true)}.buttonStyle(TrailButton())
+            }
         }}
     }
     private var homeHeading:some View{VStack(alignment:.leading,spacing:6){Text("WORD TRAILS").font(.caption.weight(.semibold)).tracking(3).dynamicTypeSize(...DynamicTypeSize.xxxLarge);Text("Find your way.").font(.system(.largeTitle,design:.serif))}}
@@ -121,7 +129,7 @@ struct LocalPlayView:View {
                     Text("\(run.puzzle.start) to \(run.puzzle.goal)").font(.system(.largeTitle,design:.serif))
                     Text("Shortest possible: \(run.puzzle.minimum) steps").font(.caption).foregroundStyle(.secondary)
                     ForEach(Array(run.chain.enumerated()),id:\.offset){i,word in VStack(spacing:8){if i>0{Image(systemName:"arrow.down").font(.caption).foregroundStyle(.secondary)};WordTiles(word:word,previous:i>0 ? run.chain[i-1]:nil,active:i==run.chain.count-1)}}
-                    if run.isComplete{completion(run)}
+                    if run.isComplete{completion(run).id("completion")}
                     else{VStack(alignment:.leading,spacing:12){
                         Text("Change one letter to make the next word.").font(.subheadline)
                         HStack{TextField("\(run.puzzle.length)-letter word",text:$input).textInputAutocapitalization(.characters).autocorrectionDisabled().keyboardType(.asciiCapable).font(.system(.title2,design:.monospaced)).submitLabel(.go).focused($focused).onSubmit(submit).accessibilityIdentifier("wordInput");Button("Add step",action:submit).font(.headline).frame(minHeight:44).disabled(input.isEmpty).accessibilityIdentifier("submitWord")}.padding(14).background(Color(.secondarySystemGroupedBackground),in:RoundedRectangle(cornerRadius:14))
@@ -131,7 +139,7 @@ struct LocalPlayView:View {
                     if !store.message.isEmpty{Text(store.message).font(.subheadline).foregroundStyle(.secondary).accessibilityIdentifier("gameMessage")}
                 }
             }.padding(20)}.background(Palette.canvas)
-            .onChange(of:store.run?.chain.count){_,_ in withAnimation{proxy.scrollTo("input",anchor:.bottom)}}
+            .onChange(of:store.run?.chain.count){_,_ in withAnimation{proxy.scrollTo(store.run?.isComplete == true ? "completion":"input",anchor:.bottom)}}
         }.navigationTitle("On the trail").navigationBarTitleDisplayMode(.inline).onDisappear{store.save()}
         .sheet(isPresented:$sharing){if let run=store.run{ResultShareView(run:run)}}
     }
@@ -139,6 +147,7 @@ struct LocalPlayView:View {
     private func completion(_ run:Run)->some View{
         PaperCard{VStack(alignment:.leading,spacing:14){
             Label("Trail complete",systemImage:"checkmark.seal.fill").font(.title2)
+            if run.isShortestSolution{ShortestRouteAcknowledgement()}
             Text(run.scoreDescription).font(.title2.weight(.semibold)).foregroundStyle(Palette.ink).accessibilityIdentifier("parResult")
             Text("\(run.moves) steps · Par \(run.puzzle.par) · Minimum \(run.puzzle.minimum)").font(.headline)
             Text(store.awarded>0 ? "+\(store.awarded) seeds for your garden":"A lovely walk. Seeds are awarded once per trail and mode.").foregroundStyle(.secondary)

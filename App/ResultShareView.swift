@@ -25,6 +25,7 @@ struct ResultCard:View {
                     }
                 }.frame(height:18).accessibilityHidden(true)
                 Text(run.hints==0 ? "Found my way without hints":"Found my way · \(run.hints) \(run.hints==1 ? "hint":"hints")").font(.system(size:16)).opacity(0.8)
+                if run.isShortestSolution{Label("Shortest possible route",systemImage:"rosette").font(.system(size:18,weight:.semibold))}
                 Text("Can you find your way?").font(.system(size:23,design:.serif)).padding(.top,6)
                 Spacer(minLength:0)
                 Text("Word Trails · apps.apple.com/app/id6827240623").font(.system(size:11)).opacity(0.6).padding(.bottom,28)

@@ -31,6 +31,7 @@ public struct Run:Codable,Hashable,Identifiable,Sendable {
     public var isDaily:Bool
     public var isComplete:Bool {chain.last == puzzle.goal}
     public var moves:Int {chain.count-1}
+    public var isShortestSolution:Bool {isComplete && moves==puzzle.minimum}
     public var scoreAgainstPar:Int {moves-puzzle.par}
     public var result:String {isComplete ? "Trail complete":"On the trail"}
     public var scoreDescription:String {
@@ -158,6 +159,14 @@ public struct Progress:Codable,Sendable {
     }
     public mutating func track(_ run:Run){
         if let i=attempts.firstIndex(where:{$0.id==run.id}){attempts[i]=run}else{attempts.append(run)}
+    }
+    public func completedAttempts(puzzleID:String?=nil,mode:PlayMode?=nil)->[Run] {
+        completed.filter{run in
+            run.isComplete && (puzzleID==nil || run.puzzle.id==puzzleID) && (mode==nil || run.mode==mode)
+        }.sorted{a,b in
+            let first=a.finishedAt ?? a.startedAt,second=b.finishedAt ?? b.startedAt
+            return first==second ? a.id.uuidString<b.id.uuidString:first>second
+        }
     }
     public func statistics(length:Int?=nil)->DifficultyStatistics {DifficultyStatistics(attempts:attempts,completed:completed,length:length)}
     public var streak:Int {streak(at:Date())}

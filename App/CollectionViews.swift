@@ -52,6 +52,7 @@ struct JournalView:View {
                 LabeledContent("Daily streak",value:"\(store.progress.streak) days")
                 LabeledContent("Badges",value:"\(Badge.all.filter{store.progress.badges.contains($0.id)}.count)")
             }
+            Section{NavigationLink{CompletedTrailsView()}label:{Label("View completed trails",systemImage:"clock.arrow.circlepath")}.accessibilityIdentifier("completedTrailHistory")}
             Section("By difficulty"){
                 ForEach(3...6,id:\.self){length in
                     DisclosureGroup{
@@ -76,11 +77,8 @@ struct JournalView:View {
             }
             Section("Recent walks"){
                 if store.progress.completed.isEmpty{Text("Your first trail is waiting. Completed routes will appear here.").foregroundStyle(.secondary)}
-                ForEach(Array(store.progress.completed.suffix(40).reversed())){run in
-                    DisclosureGroup{
-                        Text(run.chain.joined(separator:" → ")).font(.system(.subheadline,design:.monospaced))
-                        Text("\(run.hints) hints · \(run.totalMoves) submitted steps").font(.caption)
-                    }label:{VStack(alignment:.leading,spacing:5){Text("\(run.puzzle.start) → \(run.puzzle.goal)").font(.headline);Text("\(run.mode.title) · \(run.moves) steps · Par \(run.puzzle.par) · \(run.scoreDescription)").font(.caption).foregroundStyle(.secondary)}}
+                ForEach(Array(store.progress.completedAttempts().prefix(40))){run in
+                    NavigationLink{CompletedAttemptView(run:run)}label:{CompletedTrailRow(run:run)}
                 }
             }
         }.navigationTitle("Statistics")
