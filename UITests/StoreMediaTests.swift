@@ -2,12 +2,13 @@ import XCTest
 import UIKit
 
 final class StoreMediaTests:XCTestCase {
+    override func setUp(){continueAfterFailure=false}
     private var app=XCUIApplication()
     private var documents:URL{FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0]}
     private func launch(_ extra:[String]=[]) {
         XCUIDevice.shared.orientation = .portrait
         app=XCUIApplication();app.launchArguments=["--ui-test","--store-capture"]+extra;app.launch()
-        XCTAssertTrue(app.buttons["continueTrail"].waitForExistence(timeout:30))
+        XCTAssertTrue(app.buttons["Walk today’s trail"].waitForExistence(timeout:30))
     }
     private func tap(_ item:XCUIElement) {
         XCTAssertTrue(item.waitForExistence(timeout:15))
@@ -47,8 +48,9 @@ final class StoreMediaTests:XCTestCase {
         tap(app.buttons["Stats"])
         try capture("08-Statistics")
         // Move the first badge to the top, keeping the real list intact.
-        let firstBadge=app.cells.matching(NSPredicate(format:"label CONTAINS %@","First footsteps")).firstMatch
+        let firstBadge=app.descendants(matching:.any).matching(NSPredicate(format:"label BEGINSWITH %@","First footsteps.")).firstMatch
         for _ in 0..<8{if firstBadge.isHittable{break};app.swipeUp()}
+        XCTAssertTrue(firstBadge.isHittable)
         app.swipeUp()
         try capture("09-Badges")
         launch();tap(app.buttons["reminderSettings"])
@@ -58,6 +60,7 @@ final class StoreMediaTests:XCTestCase {
     func testIPadRotationAndShare() throws {
         guard UIDevice.current.userInterfaceIdiom == .pad else{throw XCTSkip("iPad layout check")}
         launch();tap(app.buttons["continueTrail"])
+        XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:15))
         XCUIDevice.shared.orientation = .landscapeLeft
         XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:10))
         try capture("QA-iPad-Landscape")
