@@ -26,10 +26,10 @@ for (i,file) in files.enumerated() where i<10 {
     }
     text("WORD TRAILS",NSRect(x:0,y:H-H*0.055,width:W,height:H*0.025),W*0.019,false,W*0.003)
     text(headings[i],NSRect(x:W*0.04,y:H*0.785,width:W*0.92,height:H*0.15),W*(pad ? 0.049:0.067),true)
-    text(captions[i],NSRect(x:W*0.035,y:H*0.745,width:W*0.93,height:H*0.037),W*(pad ? 0.018:0.025))
-    let scale=min((W-W*0.12)/CGFloat(w),(H*0.69)/CGFloat(h))
+    text(captions[i],NSRect(x:W*0.035,y:H*0.805,width:W*0.93,height:H*0.037),W*(pad ? 0.018:0.025))
+    let scale=min((W-W*0.12)/CGFloat(w),(H*0.77)/CGFloat(h))
     let sw=CGFloat(w)*scale,sh=CGFloat(h)*scale
-    let frame=NSRect(x:(W-sw)/2,y:H*0.025,width:sw,height:sh)
+    let frame=NSRect(x:(W-sw)/2,y:H*0.02,width:sw,height:sh)
     let shadow=NSShadow();shadow.shadowColor=ink.withAlphaComponent(0.16);shadow.shadowBlurRadius=W*0.028;shadow.shadowOffset=NSSize(width:0,height:-W*0.012)
     NSGraphicsContext.saveGraphicsState();shadow.set();NSColor.white.setFill();NSBezierPath(roundedRect:frame,xRadius:W*0.025,yRadius:W*0.025).fill();NSGraphicsContext.restoreGraphicsState()
     NSGraphicsContext.saveGraphicsState();NSBezierPath(roundedRect:frame,xRadius:W*0.025,yRadius:W*0.025).addClip();image.draw(in:frame,from:.zero,operation:.copy,fraction:1);NSGraphicsContext.restoreGraphicsState()
