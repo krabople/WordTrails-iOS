@@ -64,7 +64,15 @@ final class StoreMediaTests:XCTestCase {
         XCUIDevice.shared.orientation = .landscapeLeft
         XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:10))
         try capture("QA-iPad-Landscape")
-        let input=app.textFields["wordInput"];input.tap();input.typeText("HUNK\n")
+        let input=app.textFields["wordInput"]
+        input.tap()
+        if !app.keyboards.firstMatch.waitForExistence(timeout:4){
+            // A rotated simulator can retain stale element tap coordinates.
+            // Retry in the application's coordinate space before typing.
+            let frame=input.frame
+            app.coordinate(withNormalizedOffset:CGVector(dx:0,dy:0)).withOffset(CGVector(dx:frame.midX,dy:frame.midY)).tap()
+        }
+        input.typeText("HUNK\n")
         XCTAssertFalse(app.staticTexts["gameMessage"].exists)
         XCUIDevice.shared.orientation = .portrait
         try capture("QA-iPad-Portrait")

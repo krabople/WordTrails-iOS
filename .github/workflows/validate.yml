@@ -58,6 +58,7 @@ jobs:
           set -o pipefail
           xcodebuild test-without-building -project WordTrails.xcodeproj -scheme WordTrails -destination "platform=iOS Simulator,id=$SIMULATOR_ID" -derivedDataPath .build/DerivedData -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 -skip-testing:WordTrailsUITests/StoreMediaTests/testRecordGameplay -resultBundlePath .build/WordTrails.xcresult CODE_SIGNING_ALLOWED=NO | tee .build/xcode-test.log
       - name: Record actual gameplay
+        if: always()
         timeout-minutes: 12
         run: python3 Support/capture-video.py
       - name: Compose store screenshots from real captures
