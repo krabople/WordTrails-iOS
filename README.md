@@ -2,9 +2,9 @@
 
 Native iPhone and iPad word trails for iOS/iPadOS 17 and later. Daily solo play works offline, with optional real-friend co-op through Apple Game Center. No versus mode or bots. The website ways2earn.com is neither accessed nor changed.
 
-Current internal TestFlight beta: **1.3.0 (2)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.3.0-2` (`cdbf32f35a24f4bc5f69cd99a8de88d268165e1b`). All 23 engine tests and five iPhone simulator UI tests passed.
+Current internal TestFlight beta: **1.4.0 (4)**, Apple processing `VALID`, assigned to Word Trails Internal with status **Testing**. Release source: `testflight-1.4.0-4` (`7526b90922b57dac74650828c6dfb3cb0cfd58ea`). Engine, iPhone and iPad simulator checks passed, including landscape input, rotation, native sharing and recorded gameplay. See `docs/STORE-MEDIA.md` for capture provenance and listing assets.
 
-<img src="docs/screenshots/08-Statistics.png" width="260" alt="Statistics per difficulty"> <img src="docs/screenshots/06-Complete.png" width="260" alt="An optimal route finishing one under par">
+<img src="docs/screenshots/1.4-iPhone-Wordplay.png" width="240" alt="Word Trails on iPhone"> <img src="docs/screenshots/1.4-iPad-Daily.png" width="360" alt="Word Trails on iPad">
 
 ## Update 1.4
 
