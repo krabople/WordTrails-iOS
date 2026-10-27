@@ -5,8 +5,9 @@ final class StoreMediaTests:XCTestCase {
     override func setUp(){continueAfterFailure=false}
     private var app=XCUIApplication()
     private var documents:URL{FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0]}
-    private func launch(_ extra:[String]=[]) {
-        XCUIDevice.shared.orientation = .portrait
+    private func launch(_ extra:[String]=[],orientation:UIDeviceOrientation = .portrait) {
+        app.terminate()
+        XCUIDevice.shared.orientation = orientation
         app=XCUIApplication();app.launchArguments=["--ui-test","--store-capture"]+extra;app.launch()
         XCTAssertTrue(app.buttons["Walk today’s trail"].waitForExistence(timeout:30))
     }
@@ -47,21 +48,18 @@ final class StoreMediaTests:XCTestCase {
         try capture("07-Garden")
         tap(app.buttons["Stats"].firstMatch)
         try capture("08-Statistics")
-        // Move the first badge to the top, keeping the real list intact.
-        let firstBadge=app.descendants(matching:.any).matching(NSPredicate(format:"label BEGINSWITH %@","First footsteps.")).firstMatch
-        for _ in 0..<8{if firstBadge.isHittable{break};app.swipeUp()}
-        XCTAssertTrue(firstBadge.isHittable)
-        app.swipeUp()
+        tap(app.buttons["badgeCollection"])
+        XCTAssertTrue(app.navigationBars["Your badges"].waitForExistence(timeout:10))
         try capture("09-Badges")
         launch();tap(app.buttons["reminderSettings"])
         XCTAssertTrue(app.switches["dailyReminderToggle"].waitForExistence(timeout:10))
         try capture("10-Reminder")
     }
-    func testIPadRotationAndShare() throws {
+    func testZZIPadRotationAndShare() throws {
         guard UIDevice.current.userInterfaceIdiom == .pad else{throw XCTSkip("iPad layout check")}
-        launch();tap(app.buttons["continueTrail"])
-        XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:15))
-        XCUIDevice.shared.orientation = .landscapeLeft
+        // Start in landscape so XCTest builds its input coordinate map there.
+        // Then verify that rotating the live game preserves the edited route.
+        launch(orientation:.landscapeLeft);tap(app.buttons["continueTrail"])
         XCTAssertTrue(app.textFields["wordInput"].waitForExistence(timeout:10))
         try capture("QA-iPad-Landscape")
         let input=app.textFields["wordInput"]

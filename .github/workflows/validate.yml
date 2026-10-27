@@ -20,14 +20,6 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
-      - name: Test dictionary, all routes, statistics and rewards
-        run: swift test -c release --parallel
-      - name: Install XcodeGen
-        run: brew install xcodegen
-      - name: Draw app icon and generate project
-        run: |
-          swift Support/make-icon.swift App/Assets.xcassets/AppIcon.appiconset
-          xcodegen generate
       - name: Select full-size store simulator
         env:
           DEVICE_FAMILY: ${{ matrix.device }}
@@ -41,6 +33,16 @@ jobs:
           print(phones[0]['name'])
           with open(os.environ['GITHUB_ENV'],'a') as f: f.write('SIMULATOR_ID='+phones[0]['udid']+'\n')
           PY
+          SIMULATOR_ID=$(tail -n 1 "$GITHUB_ENV" | cut -d= -f2-)
+          xcrun simctl boot "$SIMULATOR_ID" || true
+      - name: Test dictionary, all routes, statistics and rewards
+        run: swift test -c release --parallel
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Draw app icon and generate project
+        run: |
+          swift Support/make-icon.swift App/Assets.xcassets/AppIcon.appiconset
+          xcodegen generate
       - name: Compile universal app and tests
         timeout-minutes: 15
         run: |

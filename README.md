@@ -11,6 +11,7 @@ Current internal TestFlight beta: **1.3.0 (2)**, Apple processing `VALID`, assig
 - Universal iPhone/iPad target; iPad supports portrait, landscape and adaptive window widths.
 - Reading widths stay comfortable on larger screens. Wide play screens place the trail alongside the controls; narrow windows and accessibility sizes use a scrolling column.
 - Letter tiles retain a sensible size, and result cards and native sharing adapt to iPad.
+- A direct badge-collection link in Statistics makes all 24 milestones easier to browse.
 - The validation matrix uses full-size iPhone Pro Max and 13-inch iPad Pro simulators. It captures ten store scenes per device, a real gameplay recording and iPad rotation/share checks.
 - Store-only sample history is compiled exclusively in Debug and requires both `--ui-test` and `--store-capture`. Real catalogue routes go through normal move validation and reward logic, with isolated temporary saves. Release builds contain no sample-progress switch.
 - Store artwork is a code-drawn composition around unaltered simulator captures, with original captures retained.

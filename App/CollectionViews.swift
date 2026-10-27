@@ -52,7 +52,10 @@ struct JournalView:View {
                 LabeledContent("Daily streak",value:"\(store.progress.streak) days")
                 LabeledContent("Badges",value:"\(Badge.all.filter{store.progress.badges.contains($0.id)}.count)")
             }
-            Section{NavigationLink{CompletedTrailsView()}label:{Label("View completed trails",systemImage:"clock.arrow.circlepath")}.accessibilityIdentifier("completedTrailHistory")}
+            Section{
+                NavigationLink{CompletedTrailsView()}label:{Label("View completed trails",systemImage:"clock.arrow.circlepath")}.accessibilityIdentifier("completedTrailHistory")
+                NavigationLink{BadgeCollectionView()}label:{Label("Your badge collection",systemImage:"rosette")}.accessibilityIdentifier("badgeCollection")
+            }
             Section("By difficulty"){
                 ForEach(3...6,id:\.self){length in
                     DisclosureGroup{
@@ -68,11 +71,7 @@ struct JournalView:View {
             Section("Your badges"){
                 ForEach(Badge.all){badge in
                     let unlocked=store.progress.badges.contains(badge.id)
-                    HStack(spacing:16){
-                        Image(systemName:badge.symbol).font(.title2).foregroundStyle(unlocked ? Palette.ochre:.secondary).frame(width:36)
-                        VStack(alignment:.leading,spacing:4){Text(badge.title).font(.headline);Text(badge.detail).font(.caption).foregroundStyle(.secondary)}
-                        Spacer();Image(systemName:unlocked ? "checkmark.seal.fill":"lock").foregroundStyle(unlocked ? Palette.ink:.secondary)
-                    }.accessibilityElement(children:.combine).accessibilityLabel("\(badge.title). \(badge.detail). \(unlocked ? "Earned":"Locked")")
+                    BadgeRow(badge:badge,unlocked:unlocked)
                 }
             }
             Section("Recent walks"){
@@ -135,4 +134,28 @@ struct DictionaryView:View {
     @State private var query=""
     private var results:[String]{query.isEmpty ? Lexicon.shared.sortedWords:Lexicon.shared.sortedWords.filter{$0.contains(query.uppercased())}}
     var body:some View{List{Section("\(results.count) words"){ForEach(results,id:\.self){Text($0).font(.system(.body,design:.monospaced))}}}.searchable(text:$query,prompt:"Find a word").navigationTitle("Trail dictionary")}
+}
+
+struct BadgeCollectionView:View {
+    @EnvironmentObject private var store:TrailStore
+    var body:some View {
+        List{
+            Section("24 milestones, at your own pace"){
+                ForEach(Badge.all){badge in
+                    BadgeRow(badge:badge,unlocked:store.progress.badges.contains(badge.id))
+                }
+            }
+        }.trailListWidth().navigationTitle("Your badges")
+    }
+}
+struct BadgeRow:View {
+    let badge:Badge
+    let unlocked:Bool
+    var body:some View {
+                    HStack(spacing:16){
+                        Image(systemName:badge.symbol).font(.title2).foregroundStyle(unlocked ? Palette.ochre:.secondary).frame(width:36)
+                        VStack(alignment:.leading,spacing:4){Text(badge.title).font(.headline);Text(badge.detail).font(.caption).foregroundStyle(.secondary)}
+                        Spacer();Image(systemName:unlocked ? "checkmark.seal.fill":"lock").foregroundStyle(unlocked ? Palette.ink:.secondary)
+                    }.accessibilityElement(children:.combine).accessibilityLabel("\(badge.title). \(badge.detail). \(unlocked ? "Earned":"Locked")")
+    }
 }
