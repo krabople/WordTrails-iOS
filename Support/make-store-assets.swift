@@ -11,8 +11,11 @@ let files=try FileManager.default.contentsOfDirectory(at:source,includingPropert
 for (i,file) in files.enumerated() where i<10 {
     guard let image=NSImage(contentsOf:file),let rep=NSBitmapImageRep(data:try Data(contentsOf:file)) else{fatalError("Invalid screenshot")}
     let w=rep.pixelsWide,h=rep.pixelsHigh
-    let bitmap=NSBitmapImageRep(bitmapDataPlanes:nil,pixelsWide:w,pixelsHigh:h,bitsPerSample:8,samplesPerPixel:3,hasAlpha:false,isPlanar:false,colorSpaceName:.deviceRGB,bytesPerRow:0,bitsPerPixel:0)!
-    NSGraphicsContext.saveGraphicsState();NSGraphicsContext.current=NSGraphicsContext(bitmapImageRep:bitmap)
+    // Core Graphics requires a supported 32-bit drawing surface. Export RGB
+    // separately so App Store screenshots contain no alpha channel.
+    let bitmap=NSBitmapImageRep(bitmapDataPlanes:nil,pixelsWide:w,pixelsHigh:h,bitsPerSample:8,samplesPerPixel:4,hasAlpha:true,isPlanar:false,colorSpaceName:.deviceRGB,bytesPerRow:0,bitsPerPixel:0)!
+    guard let context=NSGraphicsContext(bitmapImageRep:bitmap) else{fatalError("No bitmap drawing context")}
+    NSGraphicsContext.saveGraphicsState();NSGraphicsContext.current=context
     let W=CGFloat(w),H=CGFloat(h),pad=W>1600
     cream.setFill();NSBezierPath(rect:NSRect(x:0,y:0,width:W,height:H)).fill()
     func text(_ value:String,_ rect:NSRect,_ size:CGFloat,_ serif:Bool=false,_ spacing:CGFloat=0){
@@ -30,6 +33,14 @@ for (i,file) in files.enumerated() where i<10 {
     let shadow=NSShadow();shadow.shadowColor=ink.withAlphaComponent(0.16);shadow.shadowBlurRadius=W*0.028;shadow.shadowOffset=NSSize(width:0,height:-W*0.012)
     NSGraphicsContext.saveGraphicsState();shadow.set();NSColor.white.setFill();NSBezierPath(roundedRect:frame,xRadius:W*0.025,yRadius:W*0.025).fill();NSGraphicsContext.restoreGraphicsState()
     NSGraphicsContext.saveGraphicsState();NSBezierPath(roundedRect:frame,xRadius:W*0.025,yRadius:W*0.025).addClip();image.draw(in:frame,from:.zero,operation:.copy,fraction:1);NSGraphicsContext.restoreGraphicsState()
-    NSGraphicsContext.restoreGraphicsState()
-    try bitmap.representation(using:.png,properties:[:])!.write(to:output.appendingPathComponent(file.lastPathComponent))
+    context.flushGraphics();NSGraphicsContext.restoreGraphicsState()
+    let rgb=NSBitmapImageRep(bitmapDataPlanes:nil,pixelsWide:w,pixelsHigh:h,bitsPerSample:8,samplesPerPixel:3,hasAlpha:false,isPlanar:false,colorSpaceName:.deviceRGB,bytesPerRow:0,bitsPerPixel:0)!
+    let src=bitmap.bitmapData!,dst=rgb.bitmapData!
+    for y in 0..<h {for x in 0..<w {
+        let a=y*bitmap.bytesPerRow+x*4,b=y*rgb.bytesPerRow+x*3
+        guard src[a+3]==255 else{fatalError("Screenshot canvas must be opaque")}
+        dst[b]=src[a];dst[b+1]=src[a+1];dst[b+2]=src[a+2]
+    }}
+    guard dst[0]>100 else{fatalError("Canvas was not rendered")}
+    try rgb.representation(using:.png,properties:[:])!.write(to:output.appendingPathComponent(file.lastPathComponent))
 }

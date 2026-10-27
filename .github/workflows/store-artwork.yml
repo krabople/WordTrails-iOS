@@ -1,0 +1,39 @@
+name: Compose App Store artwork
+on:
+  workflow_dispatch:
+    inputs:
+      capture_run:
+        description: Validation run containing real simulator capture artifacts
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  compose:
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.capture_run }}
+          pattern: WordTrails-validation-*
+          path: captures
+      - name: Render opaque RGB screenshots
+        run: |
+          mkdir -p artwork
+          swiftc -O Support/make-store-assets.swift -o artwork/compose
+          for DEVICE in iPhone iPad; do
+            SOURCE="captures/WordTrails-validation-$DEVICE/store-media/originals"
+            test -d "$SOURCE"
+            artwork/compose "$SOURCE" "artwork/$DEVICE"
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: WordTrails-store-artwork
+          path: |
+            artwork/iPhone/
+            artwork/iPad/
+          retention-days: 7
